@@ -9,11 +9,11 @@ $rtSpeed = max(20, (int)mc_setting('running_text_speed', 60));
 ?>
 <footer class="grid relative z-10" style="grid-template-rows: auto auto auto 28px;">
 
-    <!-- Quran: ARAB + REFERENSI, scroll LTR (kiri → kanan) -->
+    <!-- Quran: ARAB + REFERENSI, scroll RTL (kanan → kiri) -->
     <div class="overflow-hidden border-t-2"
          style="background: linear-gradient(90deg, var(--primary-dark), var(--primary), var(--primary-dark));
                 border-color: color-mix(in srgb, var(--accent) 60%, transparent);">
-        <div class="marquee" style="height: 50px;">
+        <div class="marquee marquee-rtl" style="height: 50px;">
             <div class="marquee-inner h-full flex items-center" style="animation-duration: <?= $quranArabSpeed ?>s;">
                 <span class="font-arabic text-white px-8" id="quranArab" dir="rtl" style="font-size: 30px; line-height: 1;">—</span>
                 <span class="font-bold whitespace-nowrap px-6" id="quranRef" style="color: var(--accent); font-size: 14px;">—</span>
@@ -26,9 +26,9 @@ $rtSpeed = max(20, (int)mc_setting('running_text_speed', 60));
         </div>
     </div>
 
-    <!-- Quran: TERJEMAHAN, scroll RTL (kanan → kiri) -->
+    <!-- Quran: TERJEMAHAN, scroll LTR (kiri → kanan) -->
     <div class="overflow-hidden bg-slate-900/90">
-        <div class="marquee marquee-rtl" style="height: 36px;">
+        <div class="marquee" style="height: 36px;">
             <div class="marquee-inner h-full flex items-center" style="animation-duration: <?= $quranTransSpeed ?>s;">
                 <span class="italic px-8 text-amber-100" id="quranTrans" style="font-size: 15px;">—</span>
                 <span class="text-slate-600 px-8">·</span>
