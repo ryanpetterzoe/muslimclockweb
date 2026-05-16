@@ -104,16 +104,22 @@ function mc_fonts_digital(): array
 function mc_layouts(): array
 {
     return [
-        'cinema'   => ['Cinema',   'Slideshow besar di kiri, jam di tengah, jadwal kanan. Sinematik dengan akcent emas.'],
-        'minimal'  => ['Minimal',  'Jam digital raksasa, jadwal di bawah dalam baris kartu rapih.'],
-        'mosque'   => ['Mosque',   'Tema masjid: ornamen Islamic, jadwal grid 6 kartu, jam digital sentral.'],
-        'neon'     => ['Neon',     'Cyberpunk: jam digital glow neon, jadwal kartu glassmorphism, cocok layar gelap.'],
-        'classic'  => ['Klasik',   'Tradisional: ornamen Arabic, latar pattern, jadwal sholat dalam tabel elegan.'],
-        'compact'  => ['Compact',  'Padat info: header, jam besar, jadwal full-width 2 baris, tanpa slideshow.'],
-        'aurora'   => ['Aurora',   'Modern aurora: gradient blob animasi, glassmorphism, jadwal kartu pill vertikal.'],
-        'magazine' => ['Magazine', 'Editorial ala majalah: typography serif, hero photo besar, jadwal koran modern.'],
-        'stadium'  => ['Stadium',  'Papan skor LED stadion: jam besar bergaya scoreboard, dot-matrix grid, mode glow.'],
-        'frame'    => ['Frame',    'Bingkai ornamen Islamic: medallion sentral, jadwal arch-card kanan-kiri, klasik mewah.'],
+        'cinema'    => ['Cinema',    'Slideshow besar di kiri, jam di tengah, jadwal kanan. Sinematik dengan akcent emas.'],
+        'minimal'   => ['Minimal',   'Jam digital raksasa, jadwal di bawah dalam baris kartu rapih.'],
+        'mosque'    => ['Mosque',    'Tema masjid: ornamen Islamic, jadwal grid 6 kartu, jam digital sentral.'],
+        'neon'      => ['Neon',      'Cyberpunk: jam digital glow neon, jadwal kartu glassmorphism, cocok layar gelap.'],
+        'classic'   => ['Klasik',    'Tradisional: ornamen Arabic, latar pattern, jadwal sholat dalam tabel elegan.'],
+        'compact'   => ['Compact',   'Padat info: header, jam besar, jadwal full-width 2 baris, tanpa slideshow.'],
+        'aurora'    => ['Aurora',    'Modern aurora: gradient blob animasi, glassmorphism, jadwal kartu pill vertikal.'],
+        'magazine'  => ['Magazine',  'Editorial ala majalah: typography serif, hero photo besar, jadwal koran modern.'],
+        'stadium'   => ['Stadium',   'Papan skor LED stadion: jam besar bergaya scoreboard, dot-matrix grid, mode glow.'],
+        'frame'     => ['Frame',     'Bingkai ornamen Islamic: medallion sentral, jadwal arch-card kanan-kiri, klasik mewah.'],
+        'galaxy'    => ['Galaxy',    'Luar angkasa: bintang berkelap-kelip, nebula, jam di core dengan orbit ring berputar.'],
+        'geometric' => ['Geometric', 'Pattern Arabic geometric: tessellation 8-point star, panel ornamen, kartu jadwal grid.'],
+        'kinetic'   => ['Kinetic',   'Tipografi kinetik super besar: banner berjalan atas-bawah, jam raksasa, pill pesan.'],
+        'marble'    => ['Marble',    'Marble premium: ukiran emas, gradient marble emas-putih, medali bulat untuk waktu.'],
+        'terminal'  => ['Terminal',  'Code editor / hacker terminal: monospace hijau-hitam, prompt $, syntax highlight.'],
+        'sunset'    => ['Sunset',    'Senja warm: gradient oranye-ungu, siluet menara masjid, pita jadwal horizontal.'],
     ];
 }
 
