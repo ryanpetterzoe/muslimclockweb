@@ -15,6 +15,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if ($action === 'mode') {
         mc_setting_set('quran_mode', $_POST['mode'] ?? 'auto');
         $_SESSION['flash']=['type'=>'ok','msg'=>'Mode disimpan.'];
+    } elseif ($action === 'speed') {
+        mc_setting_set('quran_arab_speed',  max(20, (int)($_POST['arab_speed']  ?? 50)));
+        mc_setting_set('quran_trans_speed', max(20, (int)($_POST['trans_speed'] ?? 60)));
+        $_SESSION['flash']=['type'=>'ok','msg'=>'Kecepatan running Qur\'an disimpan.'];
     } elseif ($action === 'add') {
         $arabic = trim($_POST['arabic'] ?? '');
         $tr     = trim($_POST['translation'] ?? '');
@@ -59,6 +63,26 @@ require __DIR__ . '/_layout.php';
             </label>
         </div>
         <button class="mc-btn mt-4" type="submit">Simpan Mode</button>
+    </form>
+</div>
+
+<div class="mc-card">
+    <h2>Kecepatan Running Qur'an</h2>
+    <p class="text-sm text-slate-500 mb-3">Durasi 1 putaran (detik). Lebih besar = lebih lambat. Direkomendasikan 40–80 detik untuk memberi waktu jamaah membaca.</p>
+    <form method="post">
+        <?= mc_csrf_field() ?>
+        <input type="hidden" name="a" value="speed">
+        <div class="row-2">
+            <div>
+                <label class="mc-label">Arab + Referensi (gerak kiri → kanan)</label>
+                <input type="number" name="arab_speed" min="20" max="180" class="mc-input" value="<?= mc_e(mc_setting('quran_arab_speed','50')) ?>">
+            </div>
+            <div>
+                <label class="mc-label">Terjemahan (gerak kanan → kiri)</label>
+                <input type="number" name="trans_speed" min="20" max="180" class="mc-input" value="<?= mc_e(mc_setting('quran_trans_speed','60')) ?>">
+            </div>
+        </div>
+        <button class="mc-btn mt-4" type="submit">Simpan Kecepatan</button>
     </form>
 </div>
 

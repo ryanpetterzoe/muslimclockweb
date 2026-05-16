@@ -100,6 +100,8 @@ if ($step === 3 && $_SERVER['REQUEST_METHOD'] === 'POST') {
                 'iqomah_duration'    => '600', // detik
                 'running_text_speed' => '60',
                 'quran_mode'         => 'auto', // auto|manual
+                'quran_arab_speed'   => '50',
+                'quran_trans_speed'  => '60',
                 'show_seconds'       => '1',
             ];
             $stIns = $pdo->prepare("INSERT INTO `{$db['prefix']}settings` (`key`,`value`) VALUES (?,?)

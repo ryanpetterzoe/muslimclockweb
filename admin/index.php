@@ -1,4 +1,7 @@
 <?php
+require_once __DIR__ . '/../includes/auth.php';
+mc_require_login();
+
 $active = 'dashboard';
 $pageTitle = 'Dashboard';
 $pageSubtitle = 'Ringkasan konfigurasi dan konten';
