@@ -102,6 +102,8 @@ if ($step === 3 && $_SERVER['REQUEST_METHOD'] === 'POST') {
                 'quran_mode'         => 'auto', // auto|manual
                 'quran_arab_speed'   => '50',
                 'quran_trans_speed'  => '60',
+                'quran_display'      => 'marquee', // marquee | card
+                'show_analog'        => '1',  // 1|0
                 'show_seconds'       => '1',
             ];
             $stIns = $pdo->prepare("INSERT INTO `{$db['prefix']}settings` (`key`,`value`) VALUES (?,?)
