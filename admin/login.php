@@ -23,18 +23,16 @@ $masjidName = mc_setting('masjid_name', 'Masjid');
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Login Admin — <?= mc_e($masjidName) ?></title>
+<title>Login Admin · <?= mc_e($masjidName) ?></title>
 <script src="https://cdn.tailwindcss.com"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-<style>
-    body { font-family: 'Inter', system-ui, sans-serif; }
-</style>
+<style>body { font-family: 'Inter', system-ui, sans-serif; }</style>
 </head>
-<body class="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-900 via-blue-900 to-slate-800 p-6">
+<body class="login-bg">
     <div class="w-full max-w-md">
         <div class="text-center mb-6">
-            <div class="inline-flex w-16 h-16 rounded-2xl bg-amber-400 items-center justify-center text-blue-900 text-3xl font-black shadow-lg">&#x262A;</div>
+            <div class="inline-flex w-16 h-16 rounded-2xl bg-amber-400 items-center justify-center text-blue-900 text-3xl font-black shadow-2xl">&#x262A;</div>
             <h1 class="text-white text-2xl font-bold mt-3">Muslim Clock Web</h1>
             <p class="text-slate-400 text-sm"><?= mc_e($masjidName) ?></p>
         </div>
@@ -59,9 +57,7 @@ $masjidName = mc_setting('masjid_name', 'Masjid');
                     <input type="password" name="password" required
                            class="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:bg-white">
                 </div>
-                <button type="submit" class="w-full bg-blue-700 hover:bg-blue-800 text-white font-semibold py-2.5 rounded-lg transition shadow-md mt-2">
-                    Masuk
-                </button>
+                <button type="submit" class="w-full bg-blue-700 hover:bg-blue-800 text-white font-semibold py-2.5 rounded-lg transition shadow-md mt-2">Masuk</button>
             </form>
         </div>
 

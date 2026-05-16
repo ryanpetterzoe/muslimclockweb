@@ -1,12 +1,14 @@
 <?php
 $active = 'slides';
+$pageTitle = 'Slideshow';
+$pageSubtitle = 'Foto/video yang akan tampil di area slideshow';
+
 require __DIR__ . '/../includes/auth.php';
 mc_require_login();
 
 $pdo = mc_db();
 $T = mc_table('slides');
 
-// actions
 $action = $_GET['a'] ?? $_POST['a'] ?? '';
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && !mc_csrf_check()) {
     $_SESSION['flash'] = ['type'=>'err','msg'=>'CSRF invalid']; mc_redirect('slides.php');
@@ -39,8 +41,7 @@ if ($action === 'upload' && $_SERVER['REQUEST_METHOD'] === 'POST') {
 }
 
 if ($action === 'toggle' && isset($_GET['id'])) {
-    $st = $pdo->prepare("UPDATE $T SET is_active = 1 - is_active WHERE id=?");
-    $st->execute([(int)$_GET['id']]);
+    $pdo->prepare("UPDATE $T SET is_active = 1 - is_active WHERE id=?")->execute([(int)$_GET['id']]);
     mc_redirect('slides.php');
 }
 if ($action === 'delete' && isset($_GET['id'])) {
@@ -51,47 +52,35 @@ if ($action === 'delete' && isset($_GET['id'])) {
     $pdo->prepare("DELETE FROM $T WHERE id=?")->execute([(int)$_GET['id']]);
     mc_redirect('slides.php');
 }
-if ($action === 'reorder' && $_SERVER['REQUEST_METHOD'] === 'POST') {
-    foreach ((array)($_POST['order'] ?? []) as $i => $id) {
-        $pdo->prepare("UPDATE $T SET sort_order=? WHERE id=?")->execute([(int)$i, (int)$id]);
-    }
-    $_SESSION['flash'] = ['type'=>'ok','msg'=>'Urutan diperbarui.'];
-    mc_redirect('slides.php');
-}
 
 $rows = $pdo->query("SELECT * FROM $T ORDER BY sort_order,id")->fetchAll();
 
 require __DIR__ . '/_layout.php';
 ?>
-<h1>Slideshow</h1>
 
-<div class="card">
+<div class="mc-card">
     <h2>Unggah Foto / Video</h2>
     <form method="post" enctype="multipart/form-data">
         <?= mc_csrf_field() ?>
         <input type="hidden" name="a" value="upload">
-        <label>Pilih beberapa file (JPG/PNG/WebP/MP4/WebM)</label>
-        <input type="file" name="files[]" accept="image/*,video/*" multiple required>
-        <label>Caption (opsional)</label>
-        <input type="text" name="caption" placeholder="mis. Bagian luar masjid">
-        <p style="margin-top:14px"><button class="btn" type="submit">Unggah</button></p>
+        <label class="mc-label">Pilih beberapa file (JPG/PNG/WebP/MP4/WebM)</label>
+        <input type="file" name="files[]" accept="image/*,video/*" multiple required class="mc-input">
+        <label class="mc-label">Caption (opsional)</label>
+        <input type="text" name="caption" class="mc-input" placeholder="mis. Bagian luar masjid">
+        <button class="mc-btn mt-4" type="submit">Unggah</button>
     </form>
 </div>
 
-<div class="card">
-    <h2>Daftar Slide</h2>
+<div class="mc-card">
+    <h2>Daftar Slide (<?= count($rows) ?>)</h2>
     <?php if (!$rows): ?>
-        <p style="color:#6b7280">Belum ada slide. Unggah dulu.</p>
+        <p class="text-sm text-slate-500">Belum ada slide. Unggah dulu.</p>
     <?php else: ?>
-    <form method="post" id="orderForm">
-        <?= mc_csrf_field() ?>
-        <input type="hidden" name="a" value="reorder">
-        <table>
-            <thead><tr><th style="width:30px">#</th><th>Preview</th><th>Tipe</th><th>Caption</th><th>Status</th><th>Aksi</th></tr></thead>
-            <tbody id="slideTable">
+    <table class="mc-table">
+        <thead><tr><th>Preview</th><th>Tipe</th><th>Caption</th><th>Status</th><th class="text-right">Aksi</th></tr></thead>
+        <tbody>
             <?php foreach ($rows as $r): ?>
-                <tr data-id="<?= (int)$r['id'] ?>">
-                    <td>≡ <input type="hidden" name="order[]" value="<?= (int)$r['id'] ?>"></td>
+                <tr>
                     <td>
                         <?php if ($r['type']==='video'): ?>
                             <video class="thumb" muted><source src="<?= mc_e('../'.$r['path']) ?>"></video>
@@ -99,19 +88,18 @@ require __DIR__ . '/_layout.php';
                             <img class="thumb" src="<?= mc_e('../'.$r['path']) ?>">
                         <?php endif; ?>
                     </td>
-                    <td><?= mc_e($r['type']) ?></td>
-                    <td><?= mc_e($r['caption']) ?></td>
-                    <td><span class="badge <?= $r['is_active']?'on':'off' ?>"><?= $r['is_active']?'Aktif':'Nonaktif' ?></span></td>
-                    <td>
-                        <a class="btn small secondary" href="?a=toggle&id=<?= (int)$r['id'] ?>">Toggle</a>
-                        <a class="btn small danger" href="?a=delete&id=<?= (int)$r['id'] ?>" onclick="return confirm('Hapus?')">Hapus</a>
+                    <td class="text-xs uppercase font-semibold text-slate-500"><?= mc_e($r['type']) ?></td>
+                    <td class="text-sm"><?= mc_e($r['caption']) ?: '<span class="text-slate-400">—</span>' ?></td>
+                    <td><span class="mc-badge <?= $r['is_active']?'on':'off' ?>"><?= $r['is_active']?'Aktif':'Off' ?></span></td>
+                    <td class="text-right whitespace-nowrap">
+                        <a class="mc-btn ghost small" href="?a=toggle&id=<?= (int)$r['id'] ?>">Toggle</a>
+                        <a class="mc-btn danger small" href="?a=delete&id=<?= (int)$r['id'] ?>" onclick="return confirm('Hapus?')">Hapus</a>
                     </td>
                 </tr>
             <?php endforeach; ?>
-            </tbody>
-        </table>
-        <p style="margin-top:12px"><button class="btn" type="submit">Simpan Urutan</button></p>
-    </form>
+        </tbody>
+    </table>
     <?php endif; ?>
 </div>
+
 <?php require __DIR__ . '/_footer.php';

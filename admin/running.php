@@ -1,5 +1,8 @@
 <?php
 $active = 'running';
+$pageTitle = 'Running Text';
+$pageSubtitle = 'Teks berjalan di lower-third layar';
+
 require __DIR__ . '/../includes/auth.php';
 mc_require_login();
 
@@ -30,47 +33,47 @@ $rows = $pdo->query("SELECT * FROM $T ORDER BY sort_order,id")->fetchAll();
 
 require __DIR__ . '/_layout.php';
 ?>
-<h1>Running Text (Lower Third)</h1>
 
-<div class="card">
+<div class="mc-card">
     <h2>Tambah Teks</h2>
     <form method="post">
         <?= mc_csrf_field() ?>
         <input type="hidden" name="a" value="add">
-        <textarea name="text" placeholder="Mis: Mari makmurkan masjid dengan sholat berjamaah" required></textarea>
-        <p style="margin-top:14px"><button class="btn" type="submit">Tambah</button></p>
+        <textarea name="text" class="mc-textarea" placeholder="Mis: Mari makmurkan masjid dengan sholat berjamaah" required></textarea>
+        <button class="mc-btn mt-3" type="submit">Tambah</button>
     </form>
 </div>
 
-<div class="card">
+<div class="mc-card">
     <h2>Kecepatan Animasi</h2>
     <form method="post">
         <?= mc_csrf_field() ?>
         <input type="hidden" name="a" value="speed">
-        <label>Durasi satu putaran (detik). Lebih besar = lebih lambat.</label>
-        <input type="number" name="speed" min="20" max="180" value="<?= mc_e(mc_setting('running_text_speed','60')) ?>">
-        <p style="margin-top:14px"><button class="btn" type="submit">Simpan</button></p>
+        <p class="text-sm text-slate-500 mb-2">Durasi satu putaran (detik). Lebih besar = lebih lambat.</p>
+        <input type="number" name="speed" min="20" max="180" class="mc-input" value="<?= mc_e(mc_setting('running_text_speed','60')) ?>">
+        <button class="mc-btn mt-3" type="submit">Simpan</button>
     </form>
 </div>
 
-<div class="card">
-    <h2>Daftar Teks</h2>
+<div class="mc-card">
+    <h2>Daftar Teks (<?= count($rows) ?>)</h2>
     <?php if (!$rows): ?>
-        <p style="color:#6b7280">Belum ada teks.</p>
+        <p class="text-sm text-slate-500">Belum ada teks.</p>
     <?php else: ?>
-    <table>
-        <thead><tr><th>Teks</th><th>Status</th><th>Aksi</th></tr></thead>
+    <table class="mc-table">
+        <thead><tr><th>Teks</th><th>Status</th><th class="text-right">Aksi</th></tr></thead>
         <?php foreach ($rows as $r): ?>
             <tr>
-                <td><?= mc_e($r['text']) ?></td>
-                <td><span class="badge <?= $r['is_active']?'on':'off' ?>"><?= $r['is_active']?'Aktif':'Nonaktif' ?></span></td>
-                <td>
-                    <a class="btn small secondary" href="?a=toggle&id=<?= (int)$r['id'] ?>">Toggle</a>
-                    <a class="btn small danger" href="?a=delete&id=<?= (int)$r['id'] ?>" onclick="return confirm('Hapus?')">Hapus</a>
+                <td class="text-sm"><?= mc_e($r['text']) ?></td>
+                <td><span class="mc-badge <?= $r['is_active']?'on':'off' ?>"><?= $r['is_active']?'Aktif':'Off' ?></span></td>
+                <td class="text-right whitespace-nowrap">
+                    <a class="mc-btn ghost small" href="?a=toggle&id=<?= (int)$r['id'] ?>">Toggle</a>
+                    <a class="mc-btn danger small" href="?a=delete&id=<?= (int)$r['id'] ?>" onclick="return confirm('Hapus?')">Hapus</a>
                 </td>
             </tr>
         <?php endforeach; ?>
     </table>
     <?php endif; ?>
 </div>
+
 <?php require __DIR__ . '/_footer.php';
