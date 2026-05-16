@@ -1,0 +1,9 @@
+/config/config.php
+/assets/uploads/slideshow/*
+!/assets/uploads/slideshow/.gitkeep
+/assets/uploads/cache/*
+!/assets/uploads/cache/.gitkeep
+/assets/uploads/logo_*
+.DS_Store
+Thumbs.db
+*.log
