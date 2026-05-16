@@ -1,0 +1,6 @@
+# Allow listing of uploaded media + block script execution
+<IfModule mod_authz_core.c>
+    <FilesMatch "\.(php|phtml|phar|pl|py|cgi|sh)$">
+        Require all denied
+    </FilesMatch>
+</IfModule>
