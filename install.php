@@ -92,6 +92,9 @@ if ($step === 3 && $_SERVER['REQUEST_METHOD'] === 'POST') {
                 'theme_preset'       => 'classic-blue',
                 'theme_primary'      => '#0a4ea3',
                 'theme_accent'       => '#f5b301',
+                'layout'             => 'cinema',  // cinema | minimal | mosque
+                'font_display'       => 'Inter',
+                'font_digital'       => 'Orbitron',
                 'adzan_message'      => 'Saatnya Waktu Sholat',
                 'adzan_duration'     => '600', // detik (10 menit)
                 'iqomah_duration'    => '600', // detik

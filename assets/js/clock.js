@@ -274,10 +274,17 @@
             const r = await fetch('api/quran.php', { cache: 'no-store' });
             const data = await r.json();
             if (data && data.arabic) {
-                $('#quranArab').textContent  = data.arabic;
-                const tr = $('#quranTrans');
-                if (tr) tr.textContent = data.translation || '';
-                $('#quranRef').textContent = data.reference || '';
+                const setText = (id, val) => {
+                    const el = document.getElementById(id);
+                    if (el) el.textContent = val || '';
+                };
+                setText('quranArab',   data.arabic);
+                setText('quranTrans', data.translation || '');
+                setText('quranRef',   data.reference || '');
+                // duplicate spans (untuk seamless marquee loop)
+                setText('quranArab2',  data.arabic);
+                setText('quranTrans2', data.translation || '');
+                setText('quranRef2',   data.reference || '');
             }
         } catch(e){ /* ignore */ }
     }

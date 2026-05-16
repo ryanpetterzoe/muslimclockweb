@@ -6,16 +6,19 @@ Aplikasi web jam sholat masjid berbasis **PHP + MySQL** yang dirancang untuk dij
 
 ## Fitur
 
-- Tampilan layar penuh: jam analog + digital, header masjid, jadwal sholat 6 waktu (Subuh, Syuruq, Dzuhur, Ashar, Maghrib, Isya), tanggal Masehi & Hijriyah, lower-third running text, cuplikan ayat Al-Qur'an di kaki layar.
+- **3 Layout pilihan** lewat admin: Cinema (slideshow + sidebar), Minimal (jam digital raksasa), Mosque (tema masjid dengan ornamen)
+- **Picker font** di admin: 9 font tampilan (Inter, Poppins, Plus Jakarta, Manrope, Outfit, Sora, Lexend, Montserrat, Rubik) + 9 font digital (Orbitron, JetBrains Mono, Space Mono, Major Mono, Share Tech, IBM Plex Mono, Anton, Bebas Neue, dll.)
+- Tampilan layar penuh: jam analog + digital, header masjid, jadwal sholat 6 waktu, tanggal Masehi & Hijriyah (format "1 Ramadhan 1447 H").
 - **Slideshow** foto/video latar (multi-file upload, urutan, aktif/nonaktif).
 - **Running text** lower-third — banyak baris, kecepatan animasi diatur.
-- **Lokasi presisi** lewat pencarian kota (OpenStreetMap), jadwal sholat dihitung pakai metode **Kemenag (Aladhan method = 20)**.
-- **Jadwal imam** Senin–Minggu untuk Subuh, Dzuhur, Ashar, Maghrib, Isya, plus khusus Sholat Jum'at (imam, khatib, bilal). Nama imam tampil otomatis pada kartu waktu sholat.
-- **Overlay adzan**: ketika masuk waktu sholat, layar berubah menampilkan pesan kustom (mis. "Saatnya Waktu Sholat"), countdown durasi adzan, lalu otomatis lanjut countdown **iqomah**.
-- **Preset tema warna** (7 preset) + warna kustom (primary & accent).
-- **Cuplikan Al-Qur'an** mode otomatis (acak via API alquran.cloud) atau manual (kelola sendiri).
+- **Cuplikan Al-Qur'an sebagai marquee** — ayat panjang tidak akan terpotong.
+- **Lokasi presisi** lewat pencarian kota (OpenStreetMap), jadwal dihitung pakai metode **Kemenag (Aladhan method = 20)**.
+- **Jadwal imam** Senin–Minggu untuk Subuh–Isya, plus Sholat Jum'at (imam, khatib, bilal). Nama imam tampil otomatis pada kartu waktu sholat.
+- **Overlay adzan**: ketika masuk waktu sholat, layar berubah menampilkan pesan kustom + countdown adzan, lalu otomatis lanjut countdown **iqomah**.
+- **Preset tema warna** (9 preset) + warna kustom (primary & accent).
 - **Installer wizard** ala WordPress — 3 langkah: persyaratan, database, akun admin & masjid.
 - Login admin terlindungi (CSRF, password hashing).
+- Tombol **Test Adzan** di pojok kiri-bawah untuk simulasi cepat.
 
 ## Persyaratan
 

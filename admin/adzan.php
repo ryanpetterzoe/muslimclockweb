@@ -1,5 +1,8 @@
 <?php
 $active = 'adzan';
+$pageTitle = 'Adzan & Iqomah';
+$pageSubtitle = 'Pesan dan durasi countdown saat masuk waktu sholat';
+
 require __DIR__ . '/../includes/auth.php';
 mc_require_login();
 
@@ -14,26 +17,28 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
 require __DIR__ . '/_layout.php';
 ?>
-<h1>Adzan & Iqomah</h1>
-<div class="card">
-    <p>Saat masuk waktu sholat, layar akan menampilkan overlay penuh dengan pesan kustom dan hitungan mundur. Setelah adzan selesai, akan dilanjutkan hitung mundur iqomah.</p>
-    <form method="post">
-        <?= mc_csrf_field() ?>
-        <label>Pesan Saat Adzan</label>
-        <input type="text" name="adzan_message" value="<?= mc_e(mc_setting('adzan_message','Saatnya Waktu Sholat')) ?>" required>
 
-        <div class="row">
+<form method="post">
+    <?= mc_csrf_field() ?>
+    <div class="mc-card">
+        <p class="text-sm text-slate-500 mb-4">Saat masuk waktu sholat, layar akan menampilkan overlay penuh dengan pesan kustom dan hitungan mundur. Setelah adzan selesai, akan dilanjutkan hitung mundur iqomah.</p>
+
+        <label class="mc-label">Pesan Saat Adzan</label>
+        <input type="text" name="adzan_message" class="mc-input" value="<?= mc_e(mc_setting('adzan_message','Saatnya Waktu Sholat')) ?>" required>
+
+        <div class="row-2 mt-2">
             <div>
-                <label>Durasi Adzan (detik)</label>
-                <input type="number" min="60" max="3600" name="adzan_duration" value="<?= (int)mc_setting('adzan_duration',600) ?>">
+                <label class="mc-label">Durasi Adzan (detik)</label>
+                <input type="number" min="60" max="3600" name="adzan_duration" class="mc-input" value="<?= (int)mc_setting('adzan_duration',600) ?>">
             </div>
             <div>
-                <label>Durasi Iqomah (detik)</label>
-                <input type="number" min="60" max="3600" name="iqomah_duration" value="<?= (int)mc_setting('iqomah_duration',600) ?>">
+                <label class="mc-label">Durasi Iqomah (detik)</label>
+                <input type="number" min="60" max="3600" name="iqomah_duration" class="mc-input" value="<?= (int)mc_setting('iqomah_duration',600) ?>">
             </div>
         </div>
+    </div>
 
-        <p style="margin-top:18px"><button class="btn" type="submit">Simpan</button></p>
-    </form>
-</div>
+    <button class="mc-btn" type="submit">Simpan</button>
+</form>
+
 <?php require __DIR__ . '/_footer.php';
