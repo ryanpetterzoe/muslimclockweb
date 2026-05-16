@@ -38,7 +38,7 @@ $isFriday = $today === 5;
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Orbitron:wght@500;600;700;800;900&family=Amiri:wght@400;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/css/screen.css?v=4">
+<link rel="stylesheet" href="assets/css/screen.css?v=5">
 <style>
     :root {
         --primary: <?= mc_e($primary) ?>;
@@ -74,7 +74,7 @@ $isFriday = $today === 5;
       data-adzan-dur="<?= (int)$adzanDur ?>"
       data-iqomah-dur="<?= (int)$iqomahDur ?>">
 
-<div id="screen" class="h-screen w-screen grid" style="grid-template-rows: 88px 1fr 96px;">
+<div id="screen" class="h-screen w-screen grid" style="grid-template-rows: 88px 1fr auto;">
 
     <!-- ========== HEADER ========== -->
     <header class="bg-gradient-to-r from-white via-slate-50 to-white text-slate-900 flex items-center justify-between px-8 border-b-4 border-accent">
@@ -99,7 +99,7 @@ $isFriday = $today === 5;
     </header>
 
     <!-- ========== BODY (3 kolom: slideshow | clock | prayer) ========== -->
-    <main class="grid min-h-0" style="grid-template-columns: 1fr 380px 360px;">
+    <main class="grid min-h-0" style="grid-template-columns: 1fr 360px 360px;">
 
         <!-- LEFT: slideshow -->
         <section class="relative overflow-hidden bg-black">
@@ -117,25 +117,17 @@ $isFriday = $today === 5;
                     <?php endif; ?>
                 <?php endforeach; endif; ?>
             </div>
-            <!-- subtle dark overlay supaya teks lebih terbaca -->
-            <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent pointer-events-none"></div>
-
-            <!-- Caption / info kanan-bawah slideshow -->
-            <div class="absolute bottom-6 left-6 right-6 flex items-end justify-between text-white">
-                <div class="glass rounded-xl px-4 py-2 text-sm font-semibold">
-                    <span id="ltGreg2">—</span>
-                </div>
-            </div>
+            <!-- subtle dark overlay -->
+            <div class="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent pointer-events-none"></div>
         </section>
 
         <!-- CENTER: Clock column (analog + digital) -->
-        <section class="bg-gradient-to-b from-slate-900 to-slate-950 flex flex-col items-center justify-center px-6 py-8 gap-8 relative">
-            <!-- decorative ring -->
+        <section class="bg-gradient-to-b from-slate-900 to-slate-950 flex flex-col items-center justify-center px-6 py-8 gap-6 relative">
             <div class="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-accent/40 to-transparent"></div>
 
-            <!-- Analog clock SVG -->
+            <!-- Analog clock SVG (smaller, subtle) -->
             <div class="relative">
-                <svg id="analog" viewBox="0 0 200 200" class="w-72 h-72 drop-shadow-[0_15px_40px_rgba(0,0,0,0.8)]">
+                <svg id="analog" viewBox="0 0 200 200" class="w-44 h-44 drop-shadow-[0_10px_30px_rgba(0,0,0,0.7)]">
                     <defs>
                         <radialGradient id="face" cx="50%" cy="35%" r="80%">
                             <stop offset="0%"  stop-color="#ffffff"/>
@@ -213,21 +205,22 @@ $isFriday = $today === 5;
                 </svg>
             </div>
 
-            <!-- Digital clock + date -->
+            <!-- Digital clock + date (PRIMARY focus) -->
             <div class="flex flex-col items-center gap-3 w-full">
-                <div class="glass rounded-2xl px-8 py-5 w-full text-center">
-                    <div id="digital" class="font-digital text-5xl font-bold tracking-[0.15em] text-white">
-                        --:--<span class="text-accent text-2xl align-top ml-1" id="digitalSec">--</span>
+                <div class="glass rounded-2xl px-6 py-6 w-full text-center">
+                    <div id="digital" class="font-digital font-bold tracking-[0.12em] text-white leading-none"
+                         style="font-size: clamp(48px, 6vw, 84px);">
+                        --:--<span class="text-accent ml-2 align-top" style="font-size:0.45em" id="digitalSec">--</span>
                     </div>
                 </div>
 
                 <!-- Next prayer countdown -->
-                <div class="text-center mt-2">
+                <div class="text-center mt-1">
                     <div class="text-[10px] uppercase tracking-[3px] text-slate-400 font-semibold">Menuju Sholat</div>
-                    <div class="mt-1">
-                        <span id="nextLabel" class="text-accent text-base font-bold uppercase tracking-wider">—</span>
-                        <span class="text-slate-400">·</span>
-                        <span id="nextCountdown" class="font-digital text-lg font-semibold text-white">--:--:--</span>
+                    <div class="mt-1.5">
+                        <span id="nextLabel" class="text-accent text-lg font-bold uppercase tracking-wider">—</span>
+                        <span class="text-slate-500 mx-1">·</span>
+                        <span id="nextCountdown" class="font-digital text-xl font-semibold text-white">--:--:--</span>
                     </div>
                 </div>
             </div>
@@ -261,31 +254,30 @@ $isFriday = $today === 5;
     </main>
 
     <!-- ========== FOOTER ========== -->
-    <footer class="bg-black grid" style="grid-template-rows: 1fr 28px;">
-        <!-- Lower-third: running text + Quran -->
-        <div class="flex items-stretch border-t-2 border-accent/70 overflow-hidden">
-            <!-- Time pill -->
-            <div class="bg-primary text-white flex items-center px-5 font-bold text-sm gap-2 shrink-0">
-                <span class="w-2 h-2 rounded-full bg-accent animate-pulse"></span>
-                <span id="ltGreg">—</span>
+    <footer class="bg-black grid" style="grid-template-rows: auto auto 28px;">
+        <!-- ROW 1: Quran verse (full width, prominent) -->
+        <div class="bg-gradient-to-r from-primary-dark via-primary to-primary-dark border-t-2 border-accent/70 px-8 py-3 grid items-center"
+             style="grid-template-columns: 1fr auto;">
+            <div class="min-w-0 flex items-baseline gap-6">
+                <div class="font-arabic text-white shrink-0" id="quranArab" dir="rtl"
+                     style="font-size: clamp(22px, 2vw, 32px); line-height: 1.4;">—</div>
+                <div class="text-amber-100 italic min-w-0 truncate hidden md:block" id="quranTrans"
+                     style="font-size: clamp(13px, 1vw, 16px);">—</div>
             </div>
-            <!-- Running text -->
-            <div class="flex-1 overflow-hidden flex items-center bg-slate-900/80">
-                <div class="lt-text whitespace-nowrap inline-block pl-[100%] font-semibold text-base text-amber-100"
-                     style="animation: ticker 60s linear infinite;">
-                    <?php if ($running): ?>
-                        <?= mc_e(implode('   •   ', $running)) ?>
-                    <?php endif; ?>
-                </div>
-            </div>
-            <!-- Quran block -->
-            <div class="bg-gradient-to-l from-primary to-primary-dark px-5 py-1 flex items-center gap-3 max-w-[55%] shrink-0">
-                <div class="font-arabic text-2xl text-white truncate" id="quranArab">—</div>
-                <div class="hidden xl:block text-xs text-amber-100 truncate max-w-[280px]" id="quranTrans">—</div>
-                <div class="text-xs text-accent font-bold whitespace-nowrap" id="quranRef">—</div>
+            <div class="text-accent font-bold text-sm whitespace-nowrap pl-4" id="quranRef">—</div>
+        </div>
+
+        <!-- ROW 2: Running text -->
+        <div class="bg-slate-900 overflow-hidden flex items-center" style="height: 44px;">
+            <div class="lt-text whitespace-nowrap inline-block pl-[100%] font-semibold text-white"
+                 style="animation: ticker 60s linear infinite; font-size: clamp(14px, 1vw, 17px);">
+                <?php if ($running): ?>
+                    <?= mc_e(implode('   •   ', $running)) ?>
+                <?php endif; ?>
             </div>
         </div>
-        <!-- Brand bar -->
+
+        <!-- ROW 3: Brand bar -->
         <div class="bg-accent text-slate-900 text-center text-xs font-extrabold leading-7 tracking-[3px] uppercase">
             <?= mc_e($masjid) ?> · Muslim Clock Web
         </div>
@@ -307,6 +299,6 @@ $isFriday = $today === 5;
 window.MC_TODAY_IMAMS = <?= json_encode($imamRows, JSON_UNESCAPED_UNICODE) ?>;
 window.MC_BASE = <?= json_encode(mc_base_url()) ?>;
 </script>
-<script src="assets/js/clock.js?v=4"></script>
+<script src="assets/js/clock.js?v=5"></script>
 </body>
 </html>

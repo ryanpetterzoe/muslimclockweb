@@ -35,9 +35,8 @@ html, body { margin: 0; padding: 0; height: 100%; }
     color: var(--accent) !important;
 }
 
-/* ---------- Analog clock smooth ---------- */
-#handH, #handM { transition: transform 0.5s cubic-bezier(0.4, 2.0, 0.55, 0.44); }
-#handS         { transition: transform 0.15s cubic-bezier(0.4, 2.5, 0.55, 0.44); }
+/* ---------- Analog clock (no CSS transition, smoothness via rAF) ---------- */
+#handH, #handM, #handS { transition: none; }
 
 /* ---------- Adzan overlay enter animation ---------- */
 #adzanOverlay:not(.hidden) {

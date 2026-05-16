@@ -42,39 +42,46 @@
     };
 
     /* ------------- Clock ticking ------------- */
-    function tick() {
+    /* Animasi analog memakai requestAnimationFrame supaya jarum bergerak halus
+       (tanpa CSS transition) — lebih elegan dan tidak "balik panjang" saat 59→0. */
+    function tickAnalog() {
+        const now = new Date();
+        const ms = now.getMilliseconds();
+        const s  = now.getSeconds() + ms / 1000;
+        const m  = now.getMinutes() + s / 60;
+        const h  = (now.getHours() % 12) + m / 60;
+
+        const sDeg = s * 6;
+        const mDeg = m * 6;
+        const hDeg = h * 30;
+
+        const handS = $('#handS'), handM = $('#handM'), handH = $('#handH');
+        if (handS) handS.setAttribute('transform', `rotate(${sDeg.toFixed(2)} 100 100)`);
+        if (handM) handM.setAttribute('transform', `rotate(${mDeg.toFixed(2)} 100 100)`);
+        if (handH) handH.setAttribute('transform', `rotate(${hDeg.toFixed(2)} 100 100)`);
+
+        requestAnimationFrame(tickAnalog);
+    }
+
+    function tickDigital() {
         const now = new Date();
         state.date = now;
 
         const h = now.getHours(), m = now.getMinutes(), s = now.getSeconds();
 
-        // Analog hands (SVG rotate)
-        const sDeg = s * 6;
-        const mDeg = m * 6 + s * 0.1;
-        const hDeg = (h % 12) * 30 + m * 0.5;
-        const handS = $('#handS'), handM = $('#handM'), handH = $('#handH');
-        if (handS) handS.setAttribute('transform', `rotate(${sDeg} 100 100)`);
-        if (handM) handM.setAttribute('transform', `rotate(${mDeg} 100 100)`);
-        if (handH) handH.setAttribute('transform', `rotate(${hDeg} 100 100)`);
-
-        // Digital
+        // Digital — detik kecil aksen
         const main = $('#digital');
         if (main) {
-            main.innerHTML = `${pad(h)}:${pad(m)}<span class="text-accent text-2xl align-top ml-1">${pad(s)}</span>`;
+            main.innerHTML = `${pad(h)}:${pad(m)}<span class="text-accent ml-2 align-top" style="font-size:0.45em">${pad(s)}</span>`;
         }
 
-        // Gregorian date Indonesia
-        const days = ['Minggu','Senin','Selasa','Rabu','Kamis',"Jum'at",'Sabtu'];
+        // Tanggal Masehi (header kanan)
+        const days   = ['Minggu','Senin','Selasa','Rabu','Kamis',"Jum'at",'Sabtu'];
         const months = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'];
         const greg = `${days[now.getDay()]}, ${now.getDate()} ${months[now.getMonth()]} ${now.getFullYear()}`;
         $('#greg-date') && ($('#greg-date').textContent = greg);
-        const ltShort = `${days[now.getDay()]}, ${now.getDate()} ${months[now.getMonth()]} ${now.getFullYear()} · ${pad(h)}:${pad(m)}`;
-        $('#ltGreg')  && ($('#ltGreg').textContent  = ltShort);
-        $('#ltGreg2') && ($('#ltGreg2').textContent = ltShort);
 
-        // Update countdown to next prayer
         updateNextCountdown(now);
-
         checkAdzanTrigger(now);
     }
 
@@ -272,7 +279,8 @@
 
     /* ------------- init ------------- */
     function init() {
-        tick(); setInterval(tick, 1000);
+        tickDigital(); setInterval(tickDigital, 1000);
+        requestAnimationFrame(tickAnalog);
         loadHijri();
         loadPrayerTimes();
         setInterval(loadPrayerTimes, 60 * 60 * 1000);
