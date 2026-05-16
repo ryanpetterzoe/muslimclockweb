@@ -44,6 +44,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     mc_setting_set('theme_primary', $primary);
     mc_setting_set('theme_accent', $accent);
 
+    // Komponen tampilan
+    $quranDisplay = ($_POST['quran_display'] ?? 'marquee') === 'card' ? 'card' : 'marquee';
+    mc_setting_set('quran_display',  $quranDisplay);
+    mc_setting_set('show_analog',    isset($_POST['show_analog'])    ? '1' : '0');
+    mc_setting_set('show_slideshow', isset($_POST['show_slideshow']) ? '1' : '0');
+    mc_setting_set('show_running',   isset($_POST['show_running'])   ? '1' : '0');
+    mc_setting_set('show_quran',     isset($_POST['show_quran'])     ? '1' : '0');
+    mc_setting_set('show_countdown', isset($_POST['show_countdown']) ? '1' : '0');
+    mc_setting_set('show_imam',      isset($_POST['show_imam'])      ? '1' : '0');
+
     $_SESSION['flash']=['type'=>'ok','msg'=>'Tampilan disimpan. Buka layar untuk lihat hasilnya.'];
     mc_redirect('appearance.php');
 }
@@ -57,6 +67,13 @@ $fontDigi = mc_setting('font_digital', 'Orbitron');
 $presetCur = mc_setting('theme_preset', 'classic-blue');
 $primaryCur = mc_setting('theme_primary', '#0a4ea3');
 $accentCur  = mc_setting('theme_accent', '#f5b301');
+$quranDisplay   = mc_setting('quran_display', 'marquee');
+$showAnalog     = (string)mc_setting('show_analog',    '1') !== '0';
+$showSlideshow  = (string)mc_setting('show_slideshow', '1') !== '0';
+$showRunning    = (string)mc_setting('show_running',   '1') !== '0';
+$showQuran      = (string)mc_setting('show_quran',     '1') !== '0';
+$showCountdown  = (string)mc_setting('show_countdown', '1') !== '0';
+$showImam       = (string)mc_setting('show_imam',      '1') !== '0';
 ?>
 
 <form method="post">
@@ -158,6 +175,74 @@ $accentCur  = mc_setting('theme_accent', '#f5b301');
         </div>
     </div>
 
+    <!-- KOMPONEN TAMPILAN -->
+    <div class="mc-card">
+        <h2>
+            <svg class="w-4 h-4 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
+            Komponen Tampilan
+        </h2>
+        <p class="text-sm text-slate-500 mb-4">Atur cara komponen ditampilkan di layar. Berlaku untuk semua layout.</p>
+
+        <!-- Quran display mode -->
+        <label class="mc-label">Tampilan Cuplikan Al-Qur'an</label>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-3 mt-1">
+            <label class="border-2 rounded-xl p-4 cursor-pointer transition <?= $quranDisplay === 'marquee' ? 'border-blue-600 bg-blue-50/40' : 'border-slate-200 hover:border-slate-300' ?>">
+                <input type="radio" name="quran_display" value="marquee" class="hidden" <?= $quranDisplay === 'marquee' ? 'checked' : '' ?>>
+                <div class="flex items-start gap-3">
+                    <svg class="w-5 h-5 text-blue-600 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+                    <div>
+                        <div class="font-bold text-sm text-slate-900">Running Text (Marquee)</div>
+                        <p class="text-xs text-slate-500 mt-1 leading-relaxed">Ayat berjalan terus seperti teks berita. Cocok untuk ayat panjang.</p>
+                        <div class="mt-3 bg-slate-900 rounded text-white text-[9px] py-1.5 px-2 overflow-hidden whitespace-nowrap">
+                            <span style="display:inline-block; animation: ticker 6s linear infinite;">إِنَّ مَعَ الْعُسْرِ يُسْرًا · QS. Asy-Syarh (94:6) ◈</span>
+                        </div>
+                    </div>
+                </div>
+            </label>
+            <label class="border-2 rounded-xl p-4 cursor-pointer transition <?= $quranDisplay === 'card' ? 'border-blue-600 bg-blue-50/40' : 'border-slate-200 hover:border-slate-300' ?>">
+                <input type="radio" name="quran_display" value="card" class="hidden" <?= $quranDisplay === 'card' ? 'checked' : '' ?>>
+                <div class="flex items-start gap-3">
+                    <svg class="w-5 h-5 text-blue-600 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h11M9 21V3M3 6h18M3 14h18M3 18h18"/></svg>
+                    <div>
+                        <div class="font-bold text-sm text-slate-900">Kartu Statis</div>
+                        <p class="text-xs text-slate-500 mt-1 leading-relaxed">Ayat dan terjemahan tampil sebagai kartu, ganti otomatis tiap 30 detik. Tidak berjalan.</p>
+                        <div class="mt-3 bg-blue-900 rounded text-white text-[9px] py-2 px-2.5">
+                            <div dir="rtl" style="font-family:'Amiri',serif">إِنَّ مَعَ الْعُسْرِ يُسْرًا</div>
+                            <div class="italic text-amber-100 mt-1">Sesungguhnya bersama kesulitan ada kemudahan.</div>
+                            <div class="text-amber-300 mt-1 font-bold">QS. Asy-Syarh (94:6)</div>
+                        </div>
+                    </div>
+                </div>
+            </label>
+        </div>
+
+        <!-- Show analog clock toggle -->
+        <div class="mt-5 pt-5 border-t border-slate-200">
+            <h3 class="text-xs font-bold uppercase tracking-[2px] text-slate-500 mb-3">Toggle Komponen</h3>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-2">
+                <?php
+                $toggles = [
+                    ['show_analog',    $showAnalog,    'Jam Analog',    'Lingkaran jam dengan jarum di samping jam digital.'],
+                    ['show_slideshow', $showSlideshow, 'Slideshow',     'Foto/video latar masjid yang berganti otomatis.'],
+                    ['show_quran',     $showQuran,     "Cuplikan Al-Qur'an", 'Baris ayat Quran di kaki layar.'],
+                    ['show_running',   $showRunning,   'Running Text',  'Teks pengumuman berjalan di kaki layar.'],
+                    ['show_countdown', $showCountdown, 'Countdown',     'Penghitung mundur menuju sholat berikutnya.'],
+                    ['show_imam',      $showImam,      'Nama Imam',     'Tampilkan nama imam di kartu waktu sholat.'],
+                ];
+                foreach ($toggles as [$name, $val, $label, $desc]): ?>
+                    <label class="flex items-start gap-3 p-3 rounded-lg border <?= $val ? 'bg-emerald-50/40 border-emerald-200' : 'bg-slate-50 border-slate-200' ?> cursor-pointer hover:border-slate-400 transition">
+                        <input type="checkbox" name="<?= $name ?>" value="1" <?= $val ? 'checked' : '' ?>
+                               class="w-5 h-5 mt-0.5 rounded border-slate-300 toggle-input">
+                        <div class="flex-1 min-w-0">
+                            <div class="font-semibold text-sm text-slate-900"><?= mc_e($label) ?></div>
+                            <p class="text-xs text-slate-500 mt-0.5"><?= mc_e($desc) ?></p>
+                        </div>
+                    </label>
+                <?php endforeach; ?>
+            </div>
+        </div>
+    </div>
+
     <div class="flex items-center gap-3">
         <button class="mc-btn" type="submit">Simpan Tampilan</button>
         <a href="../index.php" target="_blank" class="mc-btn ghost">Buka Layar ↗</a>
@@ -178,6 +263,36 @@ document.querySelectorAll('.preset-card').forEach(card => {
         document.querySelectorAll('.preset-card').forEach(c => c.classList.remove('selected'));
         card.classList.add('selected');
         card.querySelector('input[type=radio]').checked = true;
+    });
+});
+
+// Quran display mode cards (highlight on click)
+document.querySelectorAll('input[name="quran_display"]').forEach(input => {
+    input.addEventListener('change', () => {
+        document.querySelectorAll('input[name="quran_display"]').forEach(i => {
+            const lbl = i.closest('label');
+            if (i.checked) {
+                lbl.classList.remove('border-slate-200');
+                lbl.classList.add('border-blue-600', 'bg-blue-50/40');
+            } else {
+                lbl.classList.remove('border-blue-600', 'bg-blue-50/40');
+                lbl.classList.add('border-slate-200');
+            }
+        });
+    });
+});
+
+// Toggle component visual feedback
+document.querySelectorAll('.toggle-input').forEach(input => {
+    input.addEventListener('change', () => {
+        const lbl = input.closest('label');
+        if (input.checked) {
+            lbl.classList.remove('bg-slate-50', 'border-slate-200');
+            lbl.classList.add('bg-emerald-50/40', 'border-emerald-200');
+        } else {
+            lbl.classList.add('bg-slate-50', 'border-slate-200');
+            lbl.classList.remove('bg-emerald-50/40', 'border-emerald-200');
+        }
     });
 });
 </script>

@@ -137,3 +137,17 @@ function mc_font_stack(string $name, string $kind = 'display'): string
     // fallback
     return $kind === 'digital' ? "'Orbitron', monospace" : "'Inter', system-ui, sans-serif";
 }
+
+/** Return MIME type for a video file based on extension. */
+function mc_video_mime(string $path): string
+{
+    $ext = strtolower(pathinfo($path, PATHINFO_EXTENSION));
+    return [
+        'mp4'  => 'video/mp4',
+        'm4v'  => 'video/mp4',
+        'mov'  => 'video/mp4',
+        'webm' => 'video/webm',
+        'ogg'  => 'video/ogg',
+        'ogv'  => 'video/ogg',
+    ][$ext] ?? 'video/mp4';
+}

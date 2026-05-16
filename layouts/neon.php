@@ -82,10 +82,10 @@
 <div class="layout-neon h-screen w-screen relative overflow-hidden">
 
     <!-- soft slideshow di belakang, blur kuat -->
-    <div id="slideshow" class="absolute inset-0 opacity-15" style="filter: blur(8px);">
+    <div id="slideshow" class="absolute inset-0 opacity-15" style="<?= ((string)mc_setting('show_slideshow','1')==='0')?'display:none;':'' ?>filter: blur(8px);">
         <?php if ($slides) foreach ($slides as $i => $s): ?>
             <?php if ($s['type']==='video'): ?>
-                <video class="slide<?= $i===0?' active':'' ?>" muted playsinline loop preload="metadata"><source src="<?= mc_e($s['path']) ?>"></video>
+                <video class="slide<?= $i===0?' active':'' ?> w-full h-full object-cover" autoplay muted playsinline loop preload="auto"><source src="<?= mc_e($s['path']) ?>" type="<?= mc_e(mc_video_mime($s['path'])) ?>"></video>
             <?php else: ?>
                 <div class="slide<?= $i===0?' active':'' ?>" style="background-image:url('<?= mc_e($s['path']) ?>')"></div>
             <?php endif; ?>
@@ -162,7 +162,7 @@
                 <div class="prayer neon-card p-4 text-center" data-key="<?= $key ?>">
                     <div class="text-[10px] uppercase tracking-[3px] font-bold text-slate-400 mb-2"><?= mc_e($label) ?></div>
                     <div class="font-digital text-3xl font-black text-white tabular-nums" data-time>--:--</div>
-                    <?php if ($imam): ?>
+                    <?php if ($imam && $showImam): ?>
                         <div class="text-[10px] mt-2 truncate" style="color: var(--accent);">⊳ <?= mc_e($imam) ?></div>
                     <?php else: ?>
                         <div class="text-[10px] mt-2 text-slate-700">·</div>

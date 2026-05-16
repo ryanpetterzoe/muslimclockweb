@@ -256,15 +256,39 @@
     /* ============= Slideshow ============= */
     function startSlideshow() {
         const slides = $$('#slideshow .slide');
+        if (!slides.length) return;
+
+        // Try to play any videos initially (autoplay attribute should already do this)
+        slides.forEach(s => {
+            if (s.tagName === 'VIDEO') {
+                s.muted = true; // ensure muted (browser autoplay policy)
+                s.play().catch(() => {
+                    // autoplay blocked; will retry on first user interaction
+                });
+            }
+        });
+        // Retry on first user interaction (for browsers blocking autoplay)
+        const retry = () => {
+            slides.forEach(s => { if (s.tagName === 'VIDEO') s.play().catch(()=>{}); });
+            document.removeEventListener('click', retry);
+            document.removeEventListener('keydown', retry);
+        };
+        document.addEventListener('click', retry, { once: true });
+        document.addEventListener('keydown', retry, { once: true });
+
         if (slides.length <= 1) return;
         let i = 0;
-        if (slides[0].tagName === 'VIDEO') slides[0].play().catch(()=>{});
         setInterval(() => {
-            slides[i].classList.remove('active');
-            if (slides[i].tagName === 'VIDEO') slides[i].pause();
+            const cur = slides[i];
+            cur.classList.remove('active');
+            if (cur.tagName === 'VIDEO') cur.pause();
             i = (i + 1) % slides.length;
-            slides[i].classList.add('active');
-            if (slides[i].tagName === 'VIDEO') slides[i].play().catch(()=>{});
+            const next = slides[i];
+            next.classList.add('active');
+            if (next.tagName === 'VIDEO') {
+                next.currentTime = 0;
+                next.play().catch(()=>{});
+            }
         }, 8000);
     }
 
@@ -278,19 +302,57 @@
                     const el = document.getElementById(id);
                     if (el) el.textContent = val || '';
                 };
-                setText('quranArab',   data.arabic);
-                setText('quranTrans', data.translation || '');
-                setText('quranRef',   data.reference || '');
-                // duplicate spans (untuk seamless marquee loop)
-                setText('quranArab2',  data.arabic);
-                setText('quranTrans2', data.translation || '');
-                setText('quranRef2',   data.reference || '');
+                // Card mode: fade out → set → fade in (for nicer transition)
+                const isCard = document.body.dataset.quranDisplay === 'card';
+                const card = document.getElementById('quranCard');
+                const apply = () => {
+                    setText('quranArab',   data.arabic);
+                    setText('quranTrans',  data.translation || '');
+                    setText('quranRef',    data.reference   || '');
+                    setText('quranArab2',  data.arabic);
+                    setText('quranTrans2', data.translation || '');
+                    setText('quranRef2',   data.reference   || '');
+                };
+                if (isCard && card) {
+                    card.style.transition = 'opacity .4s ease';
+                    card.style.opacity = '0';
+                    setTimeout(() => { apply(); card.style.opacity = '1'; }, 400);
+                } else {
+                    apply();
+                }
             }
         } catch(e){ /* ignore */ }
     }
 
+    /* ============= Component visibility (driven by body data-* attrs) ============= */
+    function applyComponentVisibility() {
+        const ds = document.body.dataset;
+        // Countdown block: hide both label "Menuju ..." and the value spans/divs.
+        if (ds.showCountdown === '0') {
+            ['#nextLabel', '#nextCountdown'].forEach(sel => {
+                document.querySelectorAll(sel).forEach(el => {
+                    el.style.display = 'none';
+                    // also hide adjacent "Menuju" labels (the previous siblings before nextLabel)
+                });
+            });
+            // Hide any label text containing "Menuju" near the countdown
+            document.querySelectorAll('span, div').forEach(el => {
+                const txt = (el.textContent || '').trim();
+                if (/^Menuju( Sholat)?$/i.test(txt)) el.style.display = 'none';
+            });
+        }
+        // Hide imam labels (in case PHP-level guard missed any)
+        if (ds.showImam === '0') {
+            document.querySelectorAll('div').forEach(el => {
+                const txt = (el.textContent || '').trim();
+                if (txt.startsWith('Imam:')) el.style.display = 'none';
+            });
+        }
+    }
+
     /* ============= init ============= */
     function init() {
+        applyComponentVisibility();
         tickDigital();
         setInterval(tickDigital, 1000);
         requestAnimationFrame(tickAnalog);

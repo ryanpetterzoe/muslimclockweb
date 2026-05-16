@@ -172,3 +172,7 @@ video.slide { object-fit: cover; width: 100%; height: 100%; }
 
 /* Hide scrollbars */
 ::-webkit-scrollbar { display: none; }
+
+/* ---------- Component visibility toggles ----------
+   Container hide handled by JS reading body data-show-* (in clock.js init).
+   Only minimal CSS rules below for things that are easy to scope. */
