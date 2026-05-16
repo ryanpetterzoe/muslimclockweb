@@ -331,5 +331,74 @@ video.slide { object-fit: cover; width: 100%; height: 100%; }
 .layout-window .prayer.next::before,
 .layout-festival .prayer.next::before,
 .layout-portrait .prayer.next::before {
+/* ===================== EXTRA LAYOUTS NEXT-STATE ===================== */
+
+/* Galaxy */
+.layout-galaxy .prayer.next .planet-card,
+.layout-galaxy .planet-card.next {
+    border-color: var(--accent);
+    background: linear-gradient(160deg, color-mix(in srgb, var(--accent) 18%, transparent), color-mix(in srgb, var(--accent) 4%, transparent));
+    box-shadow: 0 0 40px -8px var(--accent);
+}
+
+/* Geometric */
+.layout-geometric .prayer.next .geo-card,
+.layout-geometric .geo-card.next {
+    border-color: var(--accent);
+    background: linear-gradient(180deg, color-mix(in srgb, var(--accent) 22%, transparent), color-mix(in srgb, var(--accent) 4%, transparent));
+    box-shadow: 0 8px 30px -6px var(--accent);
+}
+.layout-geometric .geo-card.next [data-time] { color: var(--accent); }
+
+/* Kinetic — pill highlight */
+.layout-kinetic .prayer.next .prayer-pill,
+.layout-kinetic .prayer-pill.next {
+    background: #fff;
+    color: var(--primary-dark);
+    transform: scale(1.04);
+    box-shadow: 0 8px 30px rgba(0,0,0,0.25);
+}
+.layout-kinetic .prayer.next .prayer-pill .ptime,
+.layout-kinetic .prayer-pill.next .ptime {
+    background: var(--primary-dark);
+    color: var(--accent);
+}
+
+/* Marble — medal highlight */
+.layout-marble .prayer.next .medal,
+.layout-marble .medal.next {
+    background: linear-gradient(180deg, rgba(212,175,55,0.32), rgba(212,175,55,0.06));
+    box-shadow: inset 0 0 24px rgba(0,0,0,0.4), 0 8px 30px -4px #d4af37;
+}
+.layout-marble .medal.next [data-time] {
+    color: #fde68a;
+    text-shadow: 0 0 18px #d4af37;
+}
+
+/* Terminal — row highlight */
+.layout-terminal .prayer.next .prayer-row,
+.layout-terminal .prayer-row.next {
+    background: rgba(74, 222, 128, 0.07);
+    border-left: 3px solid var(--accent);
+}
+.layout-terminal .prayer-row.next [data-time] { color: var(--accent); }
+.layout-terminal .prayer-row.next .arrow      { color: var(--accent); }
+
+/* Sunset — cell highlight */
+.layout-sunset .prayer.next .prayer-cell,
+.layout-sunset .prayer-cell.next {
+    background: linear-gradient(180deg, rgba(245,179,1,0.25), transparent);
+}
+.layout-sunset .prayer-cell.next [data-time] {
+    color: #fde68a;
+    text-shadow: 0 0 20px #f59e0b;
+}
+
+/* Override the universal .prayer.next ::before bar for layouts that don't suit a left bar */
+.layout-galaxy .prayer.next::before,
+.layout-geometric .prayer.next::before,
+.layout-kinetic .prayer.next::before,
+.layout-marble .prayer.next::before,
+.layout-sunset .prayer.next::before {
     display: none;
 }
