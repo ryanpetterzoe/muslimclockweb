@@ -1,8 +1,8 @@
 <?php
 /**
  * Footer:
- *  - Quran area (mode: 'marquee' atau 'card', diatur admin) — bisa di-hide
- *  - Running text masjid — bisa di-hide
+ *  - Quran area (mode: 'marquee' | 'card' | 'fullcard' | 'slide' | 'typewriter')
+ *  - Running text masjid
  *  - Brand bar (selalu tampil)
  */
 $quranArabSpeed  = max(20, (int)mc_setting('quran_arab_speed', 50));
@@ -23,7 +23,7 @@ $gridRows = implode(' ', $rows);
 
     <?php if ($showQuran): ?>
         <?php if ($quranDisplay === 'card'): ?>
-            <!-- MODE: CARD -->
+            <!-- MODE: CARD (compact) -->
             <div class="border-t-2 px-6 py-4 grid items-center gap-6"
                  style="background: linear-gradient(90deg, var(--primary-dark), var(--primary), var(--primary-dark));
                         border-color: color-mix(in srgb, var(--accent) 60%, transparent);
@@ -44,10 +44,93 @@ $gridRows = implode(' ', $rows);
             <span class="hidden" id="quranArab2"></span>
             <span class="hidden" id="quranTrans2"></span>
             <span class="hidden" id="quranRef2"></span>
+
+        <?php elseif ($quranDisplay === 'fullcard'): ?>
+            <!-- MODE: FULL CARD - teks lengkap auto-fit, font ngecil otomatis biar muat -->
+            <div id="quranCard" class="quran-fullcard border-t-2 px-8 py-5 relative overflow-hidden"
+                 style="background:
+                            radial-gradient(circle at 0% 0%, color-mix(in srgb, var(--accent) 20%, transparent), transparent 50%),
+                            linear-gradient(90deg, var(--primary-dark), var(--primary), var(--primary-dark));
+                        border-color: color-mix(in srgb, var(--accent) 70%, transparent);">
+                <!-- corner ornaments -->
+                <div class="absolute top-2 left-3 text-2xl opacity-30" style="color: var(--accent);">﴿</div>
+                <div class="absolute top-2 right-3 text-2xl opacity-30" style="color: var(--accent);">﴾</div>
+
+                <div class="grid items-center gap-5" style="grid-template-columns: 1fr auto;">
+                    <div class="min-w-0">
+                        <!-- Arabic: full text, auto-fit via JS, NO line-clamp -->
+                        <div id="quranArab" class="font-arabic text-white quran-autofit-arab text-center" dir="rtl"
+                             style="line-height: 1.6; word-break: keep-all; overflow-wrap: break-word; max-height: 90px; overflow: hidden;">—</div>
+                        <!-- Translation: full text, auto-fit, NO line-clamp -->
+                        <div id="quranTrans" class="italic text-amber-100 mt-2 quran-autofit-trans text-center"
+                             style="line-height: 1.45; word-break: normal; overflow-wrap: break-word; max-height: 56px; overflow: hidden;">—</div>
+                    </div>
+                    <div class="text-right whitespace-nowrap pl-5 shrink-0 border-l border-white/15">
+                        <div class="text-[10px] uppercase tracking-[3px] text-slate-300 font-semibold">Al-Qur'an</div>
+                        <div class="font-bold text-sm mt-1" id="quranRef" style="color: var(--accent);">—</div>
+                        <div class="text-[10px] text-slate-400 mt-1" id="quranProgress">— / —</div>
+                    </div>
+                </div>
+            </div>
+            <span class="hidden" id="quranArab2"></span>
+            <span class="hidden" id="quranTrans2"></span>
+            <span class="hidden" id="quranRef2"></span>
+
+        <?php elseif ($quranDisplay === 'slide'): ?>
+            <!-- MODE: SLIDE - ayat masuk dari kanan, tampil 8 detik, geser keluar ke kiri -->
+            <div id="quranCard" class="quran-slide border-t-2 px-8 py-4 relative overflow-hidden"
+                 style="background: linear-gradient(90deg, var(--primary-dark), var(--primary), var(--primary-dark));
+                        border-color: color-mix(in srgb, var(--accent) 60%, transparent);
+                        min-height: 96px;">
+                <div class="grid items-center gap-5 transition-all" style="grid-template-columns: 1fr auto;">
+                    <div class="min-w-0 text-center">
+                        <!-- Arabic full -->
+                        <div id="quranArab" class="font-arabic text-white quran-slide-arab" dir="rtl"
+                             style="font-size: clamp(20px, 2vw, 30px); line-height: 1.5; word-break: keep-all; overflow-wrap: break-word;">—</div>
+                        <!-- Translation full -->
+                        <div id="quranTrans" class="italic text-amber-100 mt-1.5"
+                             style="font-size: clamp(12px, 1vw, 16px); line-height: 1.4;">—</div>
+                    </div>
+                    <div class="text-right whitespace-nowrap pl-4 shrink-0">
+                        <div class="text-[10px] uppercase tracking-[3px] text-slate-300 font-semibold">Ayat</div>
+                        <div class="font-bold text-sm mt-0.5" id="quranRef" style="color: var(--accent);">—</div>
+                    </div>
+                </div>
+            </div>
+            <span class="hidden" id="quranArab2"></span>
+            <span class="hidden" id="quranTrans2"></span>
+            <span class="hidden" id="quranRef2"></span>
+
+        <?php elseif ($quranDisplay === 'typewriter'): ?>
+            <!-- MODE: TYPEWRITER - efek mesin tik per huruf -->
+            <div id="quranCard" class="quran-typewriter border-t-2 px-8 py-4 relative overflow-hidden"
+                 style="background: linear-gradient(90deg, var(--primary-dark), var(--primary), var(--primary-dark));
+                        border-color: color-mix(in srgb, var(--accent) 60%, transparent);
+                        min-height: 100px;">
+                <div class="grid items-center gap-5" style="grid-template-columns: 1fr auto;">
+                    <div class="min-w-0 text-center">
+                        <div class="font-arabic text-white" dir="rtl"
+                             style="font-size: clamp(20px, 1.9vw, 28px); line-height: 1.5; min-height: 1.5em; word-break: keep-all;">
+                            <span id="quranArab">—</span><span class="quran-cursor" data-cursor-arab>▌</span>
+                        </div>
+                        <div class="italic text-amber-100 mt-1"
+                             style="font-size: clamp(12px, 1vw, 15px); line-height: 1.4; min-height: 1.4em;">
+                            <span id="quranTrans">—</span><span class="quran-cursor" data-cursor-trans style="display:none;">▌</span>
+                        </div>
+                    </div>
+                    <div class="text-right whitespace-nowrap pl-4 shrink-0 border-l border-white/15">
+                        <div class="text-[10px] uppercase tracking-[3px] text-slate-300 font-semibold">Tafakkur</div>
+                        <div class="font-bold text-sm mt-1" id="quranRef" style="color: var(--accent);">—</div>
+                    </div>
+                </div>
+            </div>
+            <span class="hidden" id="quranArab2"></span>
+            <span class="hidden" id="quranTrans2"></span>
+            <span class="hidden" id="quranRef2"></span>
+
         <?php else: ?>
             <!-- MODE: MARQUEE (default, 2 baris arah berlawanan) -->
             <div class="grid" style="grid-template-rows: auto auto;">
-                <!-- Arab + Referensi: gerak kanan -> kiri (RTL) -->
                 <div class="overflow-hidden border-t-2"
                      style="background: linear-gradient(90deg, var(--primary-dark), var(--primary), var(--primary-dark));
                             border-color: color-mix(in srgb, var(--accent) 60%, transparent);">
@@ -62,7 +145,6 @@ $gridRows = implode(' ', $rows);
                         </div>
                     </div>
                 </div>
-                <!-- Terjemahan: gerak kiri -> kanan (LTR) -->
                 <div class="overflow-hidden bg-slate-900/90">
                     <div class="marquee" style="height: 36px;">
                         <div class="marquee-inner h-full flex items-center" style="animation-duration: <?= $quranTransSpeed ?>s;">
