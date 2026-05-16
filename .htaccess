@@ -2,12 +2,16 @@
 Options -Indexes
 DirectoryIndex index.php
 
-# Block sensitive file types
 <FilesMatch "\.(env|sql|md|log)$">
     Require all denied
 </FilesMatch>
 
-# Block raw config file (still loaded by PHP via require)
 <Files "config.php">
     Require all denied
 </Files>
+
+# Allow uploads to be served
+<Directory "assets/uploads">
+    Options -Indexes
+    Require all granted
+</Directory>

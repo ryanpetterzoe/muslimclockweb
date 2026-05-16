@@ -1,8 +1,0 @@
-# Allow listing of uploaded media
-Options -Indexes
-Require all granted
-
-# Prevent execution of PHP / scripts inside uploads
-<FilesMatch "\.(php|phtml|phar|pl|py|cgi|sh)$">
-    Require all denied
-</FilesMatch>
