@@ -77,7 +77,9 @@ $fontsUrl = mc_google_fonts_url([$fontDisp, $fontDigi, 'Amiri']);
 </head>
 <body data-adzan-msg="<?= mc_e($adzanMsg) ?>"
       data-adzan-dur="<?= (int)$adzanDur ?>"
-      data-iqomah-dur="<?= (int)$iqomahDur ?>">
+      data-iqomah-dur="<?= (int)$iqomahDur ?>"
+      data-show-analog="<?= ((string)mc_setting('show_analog','1') === '0') ? '0' : '1' ?>"
+      data-quran-display="<?= mc_e(mc_setting('quran_display', 'marquee')) ?>">
 
 <?php
 $layoutFile = __DIR__ . '/layouts/' . $layout . '.php';

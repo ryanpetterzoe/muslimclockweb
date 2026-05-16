@@ -278,13 +278,24 @@
                     const el = document.getElementById(id);
                     if (el) el.textContent = val || '';
                 };
-                setText('quranArab',   data.arabic);
-                setText('quranTrans', data.translation || '');
-                setText('quranRef',   data.reference || '');
-                // duplicate spans (untuk seamless marquee loop)
-                setText('quranArab2',  data.arabic);
-                setText('quranTrans2', data.translation || '');
-                setText('quranRef2',   data.reference || '');
+                // Card mode: fade out → set → fade in (for nicer transition)
+                const isCard = document.body.dataset.quranDisplay === 'card';
+                const card = document.getElementById('quranCard');
+                const apply = () => {
+                    setText('quranArab',   data.arabic);
+                    setText('quranTrans',  data.translation || '');
+                    setText('quranRef',    data.reference   || '');
+                    setText('quranArab2',  data.arabic);
+                    setText('quranTrans2', data.translation || '');
+                    setText('quranRef2',   data.reference   || '');
+                };
+                if (isCard && card) {
+                    card.style.transition = 'opacity .4s ease';
+                    card.style.opacity = '0';
+                    setTimeout(() => { apply(); card.style.opacity = '1'; }, 400);
+                } else {
+                    apply();
+                }
             }
         } catch(e){ /* ignore */ }
     }

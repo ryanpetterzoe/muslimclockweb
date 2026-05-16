@@ -1,8 +1,12 @@
 <?php
 /**
  * Reusable analog clock SVG (centered viewBox, hand rotation via group transform).
- * Caller can pass $clockSize (default w-44 h-44).
+ * Caller can pass $clockSize (default w-40 h-40).
+ *
+ * Hidden if admin set show_analog = 0.
  */
+if ((string)mc_setting('show_analog', '1') === '0') return;
+
 $clockSize = $clockSize ?? 'w-40 h-40';
 ?>
 <svg id="analog" viewBox="-100 -100 200 200" class="<?= $clockSize ?> drop-shadow-[0_10px_30px_rgba(0,0,0,0.7)]">
