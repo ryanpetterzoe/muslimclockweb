@@ -74,11 +74,11 @@ require __DIR__ . '/_layout.php';
         <input type="hidden" name="a" value="speed">
         <div class="row-2">
             <div>
-                <label class="mc-label">Arab + Referensi (gerak kiri → kanan)</label>
+                <label class="mc-label">Arab + Referensi (gerak kanan → kiri)</label>
                 <input type="number" name="arab_speed" min="20" max="180" class="mc-input" value="<?= mc_e(mc_setting('quran_arab_speed','50')) ?>">
             </div>
             <div>
-                <label class="mc-label">Terjemahan (gerak kanan → kiri)</label>
+                <label class="mc-label">Terjemahan (gerak kiri → kanan)</label>
                 <input type="number" name="trans_speed" min="20" max="180" class="mc-input" value="<?= mc_e(mc_setting('quran_trans_speed','60')) ?>">
             </div>
         </div>

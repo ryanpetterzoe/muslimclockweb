@@ -33,7 +33,7 @@ $fontDisp   = mc_setting('font_display', 'Inter');
 $fontDigi   = mc_setting('font_digital', 'Orbitron');
 
 // Override via ?preview= (untuk admin live preview, tidak persisten)
-$allowed = ['cinema','minimal','mosque'];
+$allowed = ['cinema','minimal','mosque','neon','classic','compact'];
 if (isset($_GET['preview']) && in_array($_GET['preview'], $allowed, true)) {
     $layout = $_GET['preview'];
 }
