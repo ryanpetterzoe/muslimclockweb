@@ -5,15 +5,19 @@
  * jadwal sholat 6 kartu di bawah dengan shadow modern.
  */
 ?>
+<?php
+  $showImam      = (string)mc_setting('show_imam',      '1') !== '0';
+  $showCountdown = (string)mc_setting('show_countdown', '1') !== '0';
+?>
 <div class="layout-minimal h-screen w-screen relative overflow-hidden" style="background:#05060d;">
 
     <!-- BG slideshow full -->
-    <div id="slideshow" class="absolute inset-0">
+    <div id="slideshow" class="absolute inset-0" style="<?= ((string)mc_setting('show_slideshow','1')==='0')?'display:none;':'' ?>">
         <?php if (!$slides): ?>
             <div class="slide active" style="background:#0a1a3c url('assets/img/default-bg.svg') center/cover"></div>
         <?php else: foreach ($slides as $i => $s): ?>
             <?php if ($s['type']==='video'): ?>
-                <video class="slide<?= $i===0?' active':'' ?>" muted playsinline loop preload="metadata"><source src="<?= mc_e($s['path']) ?>"></video>
+                <video class="slide<?= $i===0?' active':'' ?> w-full h-full object-cover" autoplay muted playsinline loop preload="auto"><source src="<?= mc_e($s['path']) ?>" type="<?= mc_e(mc_video_mime($s['path'])) ?>"></video>
             <?php else: ?>
                 <div class="slide<?= $i===0?' active':'' ?>" style="background-image:url('<?= mc_e($s['path']) ?>')"></div>
             <?php endif; ?>
@@ -94,7 +98,7 @@
                 <div class="prayer prayer-card p-5 backdrop-blur-md" data-key="<?= $key ?>">
                     <div class="label text-xs uppercase tracking-[3px] font-bold text-slate-300"><?= mc_e($label) ?></div>
                     <div class="font-digital text-4xl font-bold text-white tabular-nums mt-2" data-time>--:--</div>
-                    <?php if ($imam): ?>
+                    <?php if ($imam && $showImam): ?>
                         <div class="text-[10px] mt-2 truncate" style="color: var(--accent);">Imam: <?= mc_e($imam) ?></div>
                     <?php else: ?>
                         <div class="text-[10px] mt-2 text-slate-500">&nbsp;</div>

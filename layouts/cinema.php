@@ -4,6 +4,10 @@
  * Variabel yg tersedia: $masjid, $alamat, $logo, $slides, $running, $imamRows, $isFriday, $adzanMsg
  */
 ?>
+<?php
+  $showImam      = (string)mc_setting('show_imam',      '1') !== '0';
+  $showCountdown = (string)mc_setting('show_countdown', '1') !== '0';
+?>
 <div class="layout-cinema h-screen w-screen grid bg-slate-950" style="grid-template-rows: 92px 1fr auto;">
 
     <!-- HEADER -->
@@ -33,12 +37,12 @@
 
         <!-- LEFT: slideshow -->
         <section class="relative overflow-hidden bg-black">
-            <div id="slideshow" class="absolute inset-0">
+            <div id="slideshow" class="absolute inset-0" style="<?= ((string)mc_setting('show_slideshow','1')==='0')?'display:none;':'' ?>">
                 <?php if (!$slides): ?>
                     <div class="slide active" style="background:#0a1a3c url('assets/img/default-bg.svg') center/cover"></div>
                 <?php else: foreach ($slides as $i => $s): ?>
                     <?php if ($s['type']==='video'): ?>
-                        <video class="slide<?= $i===0?' active':'' ?>" muted playsinline loop preload="metadata"><source src="<?= mc_e($s['path']) ?>"></video>
+                        <video class="slide<?= $i===0?' active':'' ?> w-full h-full object-cover" autoplay muted playsinline loop preload="auto"><source src="<?= mc_e($s['path']) ?>" type="<?= mc_e(mc_video_mime($s['path'])) ?>"></video>
                     <?php else: ?>
                         <div class="slide<?= $i===0?' active':'' ?>" style="background-image:url('<?= mc_e($s['path']) ?>')"></div>
                     <?php endif; ?>
@@ -87,7 +91,7 @@
             <div class="prayer flex-1 flex items-center justify-between px-5 border-b border-white/10 last:border-b-0" data-key="<?= $key ?>">
                 <div>
                     <div class="text-xl font-bold uppercase tracking-wider text-white"><?= mc_e($label) ?></div>
-                    <?php if ($imam): ?>
+                    <?php if ($imam && $showImam): ?>
                         <div class="text-[11px] mt-0.5 font-medium" style="color: color-mix(in srgb, var(--accent) 80%, white);">Imam: <?= mc_e($imam) ?></div>
                     <?php endif; ?>
                 </div>

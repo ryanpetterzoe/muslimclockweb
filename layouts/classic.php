@@ -52,10 +52,10 @@
     <div class="pattern"></div>
 
     <!-- background slideshow with strong overlay -->
-    <div id="slideshow" class="absolute inset-0 opacity-20">
+    <div id="slideshow" class="absolute inset-0 opacity-20" style="<?= ((string)mc_setting('show_slideshow','1')==='0')?'display:none;':'' ?>">
         <?php if ($slides) foreach ($slides as $i => $s): ?>
             <?php if ($s['type']==='video'): ?>
-                <video class="slide<?= $i===0?' active':'' ?>" muted playsinline loop preload="metadata"><source src="<?= mc_e($s['path']) ?>"></video>
+                <video class="slide<?= $i===0?' active':'' ?> w-full h-full object-cover" autoplay muted playsinline loop preload="auto"><source src="<?= mc_e($s['path']) ?>" type="<?= mc_e(mc_video_mime($s['path'])) ?>"></video>
             <?php else: ?>
                 <div class="slide<?= $i===0?' active':'' ?>" style="background-image:url('<?= mc_e($s['path']) ?>')"></div>
             <?php endif; ?>
@@ -145,7 +145,7 @@
                     <div class="font-arabic text-2xl text-right" style="color: var(--accent);"><?= mc_e($arab) ?></div>
                     <div>
                         <div class="pname text-base font-bold uppercase tracking-wider text-white"><?= mc_e($label) ?></div>
-                        <?php if ($imam): ?>
+                        <?php if ($imam && $showImam): ?>
                             <div class="text-[11px] text-slate-400 mt-0.5">Imam: <?= mc_e($imam) ?></div>
                         <?php endif; ?>
                     </div>

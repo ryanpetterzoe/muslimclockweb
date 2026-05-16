@@ -102,7 +102,7 @@
                 <div class="prayer pcell" data-key="<?= $key ?>">
                     <div class="flex-1 min-w-0">
                         <div class="label text-xs uppercase tracking-[3px] font-bold text-slate-300"><?= mc_e($label) ?></div>
-                        <?php if ($imam): ?><div class="text-[10px] mt-0.5 truncate" style="color: var(--accent);">Imam: <?= mc_e($imam) ?></div><?php endif; ?>
+                        <?php if ($imam && $showImam): ?><div class="text-[10px] mt-0.5 truncate" style="color: var(--accent);">Imam: <?= mc_e($imam) ?></div><?php endif; ?>
                     </div>
                     <div class="font-digital text-3xl font-bold text-white tabular-nums" data-time>--:--</div>
                 </div>
@@ -125,7 +125,7 @@
                 <div class="prayer pcell" data-key="<?= $key ?>">
                     <div class="flex-1 min-w-0">
                         <div class="label text-xs uppercase tracking-[3px] font-bold text-slate-300"><?= mc_e($label) ?></div>
-                        <?php if ($imam): ?><div class="text-[10px] mt-0.5 truncate" style="color: var(--accent);">Imam: <?= mc_e($imam) ?></div><?php endif; ?>
+                        <?php if ($imam && $showImam): ?><div class="text-[10px] mt-0.5 truncate" style="color: var(--accent);">Imam: <?= mc_e($imam) ?></div><?php endif; ?>
                     </div>
                     <div class="font-digital text-3xl font-bold text-white tabular-nums" data-time>--:--</div>
                 </div>

@@ -4,6 +4,10 @@
  * Tema masjid: ornamen islamic, jadwal grid 6 kartu, jam digital sentral.
  */
 ?>
+<?php
+  $showImam      = (string)mc_setting('show_imam',      '1') !== '0';
+  $showCountdown = (string)mc_setting('show_countdown', '1') !== '0';
+?>
 <div class="layout-mosque h-screen w-screen relative overflow-hidden ornament-pattern">
 
     <!-- soft glow corners -->
@@ -11,10 +15,10 @@
     <div class="absolute -bottom-32 -right-32 w-[500px] h-[500px] rounded-full opacity-25 blur-3xl pointer-events-none" style="background: var(--primary);"></div>
 
     <!-- bg slideshow at low opacity -->
-    <div id="slideshow" class="absolute inset-0 opacity-25">
+    <div id="slideshow" class="absolute inset-0 opacity-25" style="<?= ((string)mc_setting('show_slideshow','1')==='0')?'display:none;':'' ?>">
         <?php if ($slides) foreach ($slides as $i => $s): ?>
             <?php if ($s['type']==='video'): ?>
-                <video class="slide<?= $i===0?' active':'' ?>" muted playsinline loop preload="metadata"><source src="<?= mc_e($s['path']) ?>"></video>
+                <video class="slide<?= $i===0?' active':'' ?> w-full h-full object-cover" autoplay muted playsinline loop preload="auto"><source src="<?= mc_e($s['path']) ?>" type="<?= mc_e(mc_video_mime($s['path'])) ?>"></video>
             <?php else: ?>
                 <div class="slide<?= $i===0?' active':'' ?>" style="background-image:url('<?= mc_e($s['path']) ?>')"></div>
             <?php endif; ?>
@@ -98,7 +102,7 @@
                 <div class="prayer prayer-grid-cell p-4 text-center backdrop-blur-md" data-key="<?= $key ?>">
                     <div class="text-[10px] uppercase tracking-[3px] font-bold text-slate-400 mb-2"><?= mc_e($label) ?></div>
                     <div class="font-digital text-3xl font-bold text-white tabular-nums" data-time>--:--</div>
-                    <?php if ($imam): ?>
+                    <?php if ($imam && $showImam): ?>
                         <div class="text-[10px] mt-2 truncate" style="color: var(--accent);">Imam: <?= mc_e($imam) ?></div>
                     <?php else: ?>
                         <div class="text-[10px] mt-2 text-slate-600">&nbsp;</div>
