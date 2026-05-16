@@ -1,4 +1,4 @@
-/* Muslim Clock Web — display logic (v4) */
+/* Muslim Clock Web — display logic (v6) */
 (function () {
     'use strict';
 
@@ -17,124 +17,101 @@
         'Jumadil Awal', 'Jumadil Akhir', 'Rajab', "Sya'ban",
         'Ramadhan', 'Syawal', "Dzulqa'dah", 'Dzulhijjah'
     ];
-
-    /* Map nama bulan Hijri (versi Intl) -> indeks 0-11 */
     const HIJRI_MAP = {
-        'muharram': 0, 'safar': 1,
-        'rabiulawal': 2, 'rabi_iawal': 2, 'rabi_iawwal': 2, 'rabi_iawalmonth': 2,
-        'rabiulakhir': 3, 'rabi_iiakhir': 3, 'rabi_iithani': 3,
-        'jumadalula': 4, 'jumadaawal': 4, 'jumadiawal': 4,
-        'jumadalakhir': 5, 'jumadaakhir': 5, 'jumadithani': 5,
-        'rajab': 6,
-        'shaban': 7, 'syaban': 7, 'sha_ban': 7,
-        'ramadan': 8, 'ramadhan': 8,
-        'shawwal': 9, 'syawal': 9,
-        'dhualqadah': 10, 'dhuqadah': 10, 'dzulqadah': 10, 'zulkaedah': 10,
-        'dhualhijjah': 11, 'dhulhijjah': 11, 'dzulhijjah': 11, 'zulhijah': 11,
+        muharram: 0, safar: 1,
+        rabiulawal: 2, rabi_iawal: 2, rabi_iawwal: 2,
+        rabiulakhir: 3, rabi_iiakhir: 3, rabi_iithani: 3,
+        jumadalula: 4, jumadaawal: 4, jumadiawal: 4,
+        jumadalakhir: 5, jumadaakhir: 5, jumadithani: 5,
+        rajab: 6,
+        shaban: 7, syaban: 7,
+        ramadan: 8, ramadhan: 8,
+        shawwal: 9, syawal: 9,
+        dhualqadah: 10, dzulqadah: 10, zulkaedah: 10,
+        dhualhijjah: 11, dzulhijjah: 11, zulhijah: 11,
     };
 
     let state = {
-        times: {},      // { fajr: 'HH:MM', ... } today
-        triggered: {},  // { 'fajr': true } already triggered today
-        date: new Date(),
+        times: {},              // { fajr:'04:30', dhuhr:'12:00', ... }
+        triggeredKey: null,     // YYYYMMDD-prayer once triggered
         adzanActive: false,
         iqomahActive: false,
     };
 
-    /* ------------- Clock ticking ------------- */
-    /* Animasi analog memakai requestAnimationFrame supaya jarum bergerak halus
-       (tanpa CSS transition) — lebih elegan dan tidak "balik panjang" saat 59→0. */
+    /* ============= Analog clock (rAF, smooth sweep) ============= */
     function tickAnalog() {
         const now = new Date();
-        const ms = now.getMilliseconds();
-        const s  = now.getSeconds() + ms / 1000;
-        const m  = now.getMinutes() + s / 60;
-        const h  = (now.getHours() % 12) + m / 60;
-
-        const sDeg = s * 6;
-        const mDeg = m * 6;
-        const hDeg = h * 30;
+        const ms  = now.getMilliseconds();
+        const sec = now.getSeconds() + ms / 1000;
+        const min = now.getMinutes() + sec / 60;
+        const hr  = (now.getHours() % 12) + min / 60;
 
         const handS = $('#handS'), handM = $('#handM'), handH = $('#handH');
-        if (handS) handS.setAttribute('transform', `rotate(${sDeg.toFixed(2)} 100 100)`);
-        if (handM) handM.setAttribute('transform', `rotate(${mDeg.toFixed(2)} 100 100)`);
-        if (handH) handH.setAttribute('transform', `rotate(${hDeg.toFixed(2)} 100 100)`);
+        if (handH) handH.setAttribute('transform', `rotate(${(hr * 30).toFixed(2)})`);
+        if (handM) handM.setAttribute('transform', `rotate(${(min * 6).toFixed(2)})`);
+        if (handS) handS.setAttribute('transform', `rotate(${(sec * 6).toFixed(2)})`);
 
         requestAnimationFrame(tickAnalog);
     }
 
+    /* ============= Digital clock + date ============= */
     function tickDigital() {
         const now = new Date();
-        state.date = now;
-
         const h = now.getHours(), m = now.getMinutes(), s = now.getSeconds();
 
-        // Digital — detik kecil aksen
         const main = $('#digital');
         if (main) {
-            main.innerHTML = `${pad(h)}:${pad(m)}<span class="text-accent ml-2 align-top" style="font-size:0.45em">${pad(s)}</span>`;
+            main.innerHTML =
+                `${pad(h)}<span class="text-accent">:</span>${pad(m)}` +
+                `<span class="text-accent text-2xl align-top ml-1.5">${pad(s)}</span>`;
         }
 
-        // Tanggal Masehi (header kanan)
         const days   = ['Minggu','Senin','Selasa','Rabu','Kamis',"Jum'at",'Sabtu'];
         const months = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'];
         const greg = `${days[now.getDay()]}, ${now.getDate()} ${months[now.getMonth()]} ${now.getFullYear()}`;
-        $('#greg-date') && ($('#greg-date').textContent = greg);
+        const gd = $('#greg-date'); if (gd) gd.textContent = greg;
 
         updateNextCountdown(now);
         checkAdzanTrigger(now);
     }
 
-    /* ------------- Hijri date (Bahasa Indonesia) ------------- */
+    /* ============= Hijri date ============= */
     function loadHijri() {
         const el = $('#hij-date');
         if (!el) return;
         try {
-            // Ambil bagian-bagian terpisah
             const parts = new Intl.DateTimeFormat('en-u-ca-islamic-umalqura', {
                 day: 'numeric', month: 'long', year: 'numeric'
             }).formatToParts(new Date());
-
             let day = '', monthName = '', year = '';
             for (const p of parts) {
                 if (p.type === 'day')   day = p.value;
                 if (p.type === 'month') monthName = p.value;
                 if (p.type === 'year')  year = p.value.replace(/\D/g, '');
             }
-
-            // Normalize bulan -> indeks
-            const key = monthName.toLowerCase()
-                .replace(/['‘’`\s\-_.]/g, '')
-                .replace(/al/, 'al');
-            // try direct lookup
+            const key = monthName.toLowerCase().replace(/['‘’`\s\-_.]/g, '');
             let idx = HIJRI_MAP[key];
             if (idx === undefined) {
-                // fallback: cari kata kunci
-                const k2 = key.replace(/[^a-z]/g, '');
                 for (const [m, i] of Object.entries(HIJRI_MAP)) {
-                    if (k2.includes(m.replace(/_/g, ''))) { idx = i; break; }
+                    if (key.includes(m)) { idx = i; break; }
                 }
             }
             const monthId = (idx !== undefined) ? HIJRI_MONTHS_ID[idx] : monthName;
             el.textContent = `${day} ${monthId} ${year} H`;
-        } catch (e) {
-            el.textContent = '';
-        }
+        } catch (e) { el.textContent = ''; }
     }
 
-    /* ------------- Prayer times ------------- */
+    /* ============= Prayer times ============= */
     async function loadPrayerTimes() {
         try {
             const r = await fetch('api/prayer.php?d=today', { cache: 'no-store' });
             const data = await r.json();
             if (data && data.timings) {
                 state.times = normalizeTimes(data.timings);
-                state.triggered = {};
                 renderTimes();
             }
         } catch (e) { console.error('prayer load failed', e); }
     }
-
     function normalizeTimes(t) {
         const out = {};
         ['Fajr','Sunrise','Dhuhr','Asr','Maghrib','Isha'].forEach(k => {
@@ -142,13 +119,11 @@
         });
         return out;
     }
-
     function renderTimes() {
         const order = ['fajr','sunrise','dhuhr','asr','maghrib','isha'];
-        const now = state.date;
+        const now = new Date();
         const nowMin = now.getHours() * 60 + now.getMinutes();
         let nextKey = null, bestDiff = Infinity;
-
         order.forEach(k => {
             const t = state.times[k];
             const card = $(`.prayer[data-key="${k}"]`);
@@ -162,7 +137,7 @@
             const diff = m - nowMin;
             if (diff > 0 && diff < bestDiff) { bestDiff = diff; nextKey = k; }
         });
-        if (!nextKey) nextKey = 'fajr'; // tomorrow's fajr
+        if (!nextKey) nextKey = 'fajr';
         const next = $(`.prayer[data-key="${nextKey}"]`);
         if (next) next.classList.add('next');
     }
@@ -178,17 +153,13 @@
             const d = sec - nowSec;
             if (d > 0 && d < bestDiff) { bestDiff = d; next = k; }
         });
-        if (!next) {
-            // ke Subuh besok
-            if (state.times.fajr) {
-                const [hh, mm] = state.times.fajr.split(':').map(Number);
-                bestDiff = (24*3600 - nowSec) + (hh*3600 + mm*60);
-                next = 'fajr';
-            }
+        if (!next && state.times.fajr) {
+            const [hh, mm] = state.times.fajr.split(':').map(Number);
+            bestDiff = (24*3600 - nowSec) + (hh*3600 + mm*60);
+            next = 'fajr';
         }
         if (next && bestDiff !== Infinity) {
-            const lbl = $('#nextLabel');
-            const cd = $('#nextCountdown');
+            const lbl = $('#nextLabel'), cd = $('#nextCountdown');
             if (lbl) lbl.textContent = PRAYER_LABEL_ID[next] || next;
             if (cd) {
                 const h = Math.floor(bestDiff / 3600);
@@ -199,15 +170,42 @@
         }
     }
 
-    /* ------------- Adzan overlay ------------- */
+    /* ============= Adzan overlay (reliable trigger) =============
+       Trigger ketika "minutes since midnight" lewat dari waktu sholat
+       dalam window 60 detik, dan belum pernah ditrigger hari ini. */
+    function dateKey(d) {
+        return `${d.getFullYear()}${pad(d.getMonth()+1)}${pad(d.getDate())}`;
+    }
+    function loadTriggered() {
+        try {
+            return JSON.parse(localStorage.getItem('mc_triggered') || '{}');
+        } catch { return {}; }
+    }
+    function saveTriggered(obj) {
+        try { localStorage.setItem('mc_triggered', JSON.stringify(obj)); } catch {}
+    }
+
     function checkAdzanTrigger(now) {
         if (state.adzanActive || state.iqomahActive) return;
-        const hh = now.getHours(), mm = now.getMinutes();
-        const hhmm = pad(hh) + ':' + pad(mm);
+        const dKey = dateKey(now);
+        const triggered = loadTriggered();
+        // bersihkan key hari sebelumnya
+        Object.keys(triggered).forEach(k => {
+            if (!k.startsWith(dKey)) delete triggered[k];
+        });
+        const nowSec = now.getHours()*3600 + now.getMinutes()*60 + now.getSeconds();
         const triggerable = ['fajr','dhuhr','asr','maghrib','isha'];
         for (const k of triggerable) {
-            if (state.times[k] === hhmm && !state.triggered[k] && now.getSeconds() < 5) {
-                state.triggered[k] = true;
+            const t = state.times[k];
+            if (!t) continue;
+            const [hh, mm] = t.split(':').map(Number);
+            const targetSec = hh*3600 + mm*60;
+            const diff = nowSec - targetSec; // positif = sudah lewat
+            const key = `${dKey}-${k}`;
+            // window 0..60 detik setelah waktu sholat, dan belum ditrigger
+            if (diff >= 0 && diff < 60 && !triggered[key]) {
+                triggered[key] = true;
+                saveTriggered(triggered);
                 showAdzan(k);
                 break;
             }
@@ -234,6 +232,12 @@
         });
     }
 
+    function hideAdzan() {
+        state.adzanActive = false;
+        state.iqomahActive = false;
+        $('#adzanOverlay').classList.add('hidden');
+    }
+
     function startCountdown(seconds, onDone) {
         const el = $('#ovCount');
         let s = seconds;
@@ -249,7 +253,7 @@
         }, 1000);
     }
 
-    /* ------------- Slideshow ------------- */
+    /* ============= Slideshow ============= */
     function startSlideshow() {
         const slides = $$('#slideshow .slide');
         if (slides.length <= 1) return;
@@ -264,29 +268,35 @@
         }, 8000);
     }
 
-    /* ------------- Quran rotation ------------- */
+    /* ============= Quran rotation ============= */
     async function loadQuran() {
         try {
             const r = await fetch('api/quran.php', { cache: 'no-store' });
             const data = await r.json();
             if (data && data.arabic) {
                 $('#quranArab').textContent  = data.arabic;
-                $('#quranTrans') && ($('#quranTrans').textContent = data.translation || '');
+                const tr = $('#quranTrans');
+                if (tr) tr.textContent = data.translation || '';
                 $('#quranRef').textContent = data.reference || '';
             }
         } catch(e){ /* ignore */ }
     }
 
-    /* ------------- init ------------- */
+    /* ============= init ============= */
     function init() {
-        tickDigital(); setInterval(tickDigital, 1000);
+        tickDigital();
+        setInterval(tickDigital, 1000);
         requestAnimationFrame(tickAnalog);
+
         loadHijri();
         loadPrayerTimes();
         setInterval(loadPrayerTimes, 60 * 60 * 1000);
+
         startSlideshow();
         loadQuran();
         setInterval(loadQuran, 30 * 1000);
+
+        // Tengah malam → reload data
         setInterval(() => {
             const n = new Date();
             if (n.getHours() === 0 && n.getMinutes() === 0 && n.getSeconds() < 5) {
@@ -294,10 +304,19 @@
             }
         }, 4000);
 
+        // Fullscreen on double-click
         document.addEventListener('dblclick', () => {
             const el = document.documentElement;
             if (!document.fullscreenElement) el.requestFullscreen && el.requestFullscreen();
             else document.exitFullscreen && document.exitFullscreen();
+        });
+
+        // Test hotkey: tekan "T" untuk simulasi overlay adzan
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 't' || e.key === 'T') {
+                if (!state.adzanActive && !state.iqomahActive) showAdzan('maghrib');
+            }
+            if (e.key === 'Escape') hideAdzan();
         });
     }
 
