@@ -1,13 +1,21 @@
-# Muslim Clock Web - Apache config
-Options -Indexes
-DirectoryIndex index.php
+# Muslim Clock Web - Apache config (defensive)
+# Semua directive dibungkus <IfModule> supaya tidak menyebabkan 500
+# kalau AllowOverride di vhost dibatasi.
 
-# Block sensitive file types
-<FilesMatch "\.(env|sql|md|log)$">
-    Require all denied
-</FilesMatch>
+<IfModule mod_autoindex.c>
+    Options -Indexes
+</IfModule>
 
-# Block raw config file (still loaded by PHP via require)
-<Files "config.php">
-    Require all denied
-</Files>
+<IfModule dir_module>
+    DirectoryIndex index.php index.html
+</IfModule>
+
+# Block sensitive file extensions
+<IfModule mod_authz_core.c>
+    <FilesMatch "\.(env|sql|md|log|ini|bak)$">
+        Require all denied
+    </FilesMatch>
+    <Files "config.php">
+        Require all denied
+    </Files>
+</IfModule>
