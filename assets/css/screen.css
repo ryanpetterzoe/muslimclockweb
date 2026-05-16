@@ -176,3 +176,83 @@ video.slide { object-fit: cover; width: 100%; height: 100%; }
 /* ---------- Component visibility toggles ----------
    Container hide handled by JS reading body data-show-* (in clock.js init).
    Only minimal CSS rules below for things that are easy to scope. */
+
+
+/* ===================== NEW LAYOUTS NEXT-STATE STYLES ===================== */
+
+/* Aurora */
+.layout-aurora .prayer.next .prayer-pill,
+.layout-aurora .prayer-pill.next {
+    border-color: var(--accent);
+    background: linear-gradient(120deg, color-mix(in srgb, var(--accent) 20%, transparent), color-mix(in srgb, var(--accent) 4%, transparent));
+    box-shadow: 0 12px 40px -10px var(--accent);
+}
+
+/* Frame */
+.layout-frame .prayer.next .arch-card,
+.layout-frame .arch-card.next {
+    border-color: var(--accent);
+    background: linear-gradient(180deg, color-mix(in srgb, var(--accent) 22%, transparent), color-mix(in srgb, var(--accent) 5%, transparent));
+    box-shadow: 0 12px 40px -10px var(--accent);
+}
+.layout-frame .arch-card.next [data-time] { color: var(--accent); }
+
+/* Stadium */
+.layout-stadium .prayer.next .scoreboard-row,
+.layout-stadium .scoreboard-row.next {
+    border-color: var(--accent);
+    background: linear-gradient(180deg, color-mix(in srgb, var(--accent) 18%, transparent), color-mix(in srgb, var(--accent) 4%, transparent));
+    box-shadow: 0 0 30px -8px var(--accent);
+}
+.layout-stadium .scoreboard-row.next [data-time] { color: var(--accent); }
+
+/* Magazine */
+.layout-magazine .prayer.next .ed-prayer,
+.layout-magazine .ed-prayer.next {
+    background: linear-gradient(90deg, color-mix(in srgb, var(--accent) 25%, transparent), transparent 70%);
+    border-left: 4px solid var(--accent);
+    padding-left: 14px;
+}
+.layout-magazine .ed-prayer.next [data-time] {
+    color: color-mix(in srgb, var(--primary) 80%, black);
+}
+
+/* ===================== QURAN NEW MODES ===================== */
+
+/* Typewriter cursor blink */
+.quran-cursor {
+    display: inline-block;
+    width: 0.5em;
+    color: var(--accent);
+    animation: quran-cursor-blink 0.9s steps(2) infinite;
+    margin-left: 2px;
+}
+@keyframes quran-cursor-blink { 50% { opacity: 0; } }
+
+/* Subtle shimmer on the fullcard ornament */
+.quran-fullcard {
+    transition: opacity .4s ease;
+}
+.quran-fullcard::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.04), transparent);
+    transform: translateX(-100%);
+    animation: quran-shimmer 6s ease-in-out infinite;
+    pointer-events: none;
+}
+@keyframes quran-shimmer {
+    0%, 100% { transform: translateX(-100%); }
+    50%      { transform: translateX(100%); }
+}
+
+/* Slide mode container */
+.quran-slide {
+    transition: transform .55s ease, opacity .45s ease;
+}
+
+/* Long arabic text guard: never break/cut mid-word */
+#quranArab, #quranTrans {
+    overflow-wrap: anywhere;
+}

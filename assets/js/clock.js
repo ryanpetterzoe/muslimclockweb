@@ -293,36 +293,191 @@
     }
 
     /* ============= Quran rotation ============= */
+    let _quranTypeTimer = null;
+    let _quranSlideTimer = null;
+    let _quranCounter = 0;
+
+    /**
+     * Auto-fit text into a container by shrinking font-size until it fits without overflow.
+     * Pastikan tulisan ga kepotong meski ayat panjang.
+     */
+    function autoFitText(el, opts) {
+        if (!el) return;
+        const minSize = opts.min || 12;
+        const maxSize = opts.max || 30;
+        const maxHeight = opts.maxHeight || el.clientHeight || 80;
+
+        // Reset to max first
+        el.style.fontSize = maxSize + 'px';
+        el.style.whiteSpace = 'normal';
+
+        // Binary search for best fit
+        let lo = minSize, hi = maxSize, best = minSize;
+        while (lo <= hi) {
+            const mid = (lo + hi) >> 1;
+            el.style.fontSize = mid + 'px';
+            // height check
+            if (el.scrollHeight <= maxHeight + 2 && el.scrollWidth <= el.clientWidth + 2) {
+                best = mid;
+                lo = mid + 1;
+            } else {
+                hi = mid - 1;
+            }
+        }
+        el.style.fontSize = best + 'px';
+    }
+
+    function setText(id, val) {
+        const el = document.getElementById(id);
+        if (el) el.textContent = val || '';
+    }
+
+    function applyQuranBasic(data) {
+        setText('quranArab',   data.arabic);
+        setText('quranTrans',  data.translation || '');
+        setText('quranRef',    data.reference   || '');
+        setText('quranArab2',  data.arabic);
+        setText('quranTrans2', data.translation || '');
+        setText('quranRef2',   data.reference   || '');
+    }
+
+    function renderQuranFullCard(data) {
+        // Set text first then auto-fit so text never gets cut off.
+        applyQuranBasic(data);
+        const card = document.getElementById('quranCard');
+        if (card) {
+            card.style.transition = 'opacity .4s ease';
+            card.style.opacity = '0';
+            setTimeout(() => {
+                const arab = document.getElementById('quranArab');
+                const trans = document.getElementById('quranTrans');
+                if (arab)  autoFitText(arab,  { min: 14, max: 32, maxHeight: 90 });
+                if (trans) autoFitText(trans, { min: 11, max: 18, maxHeight: 56 });
+                // Counter / progress
+                _quranCounter++;
+                const prog = document.getElementById('quranProgress');
+                if (prog) prog.textContent = '#' + _quranCounter;
+                card.style.opacity = '1';
+            }, 380);
+        }
+    }
+
+    function renderQuranSlide(data) {
+        const card = document.getElementById('quranCard');
+        if (!card) { applyQuranBasic(data); return; }
+        // Slide out to the left
+        card.style.transition = 'transform .55s ease, opacity .45s ease';
+        card.style.transform = 'translateX(-30%)';
+        card.style.opacity = '0';
+        setTimeout(() => {
+            applyQuranBasic(data);
+            const arab = document.getElementById('quranArab');
+            if (arab) autoFitText(arab, { min: 16, max: 32, maxHeight: 60 });
+            // Reset position to right then animate in
+            card.style.transition = 'none';
+            card.style.transform = 'translateX(30%)';
+            card.style.opacity = '0';
+            // Force reflow
+            void card.offsetWidth;
+            card.style.transition = 'transform .6s ease, opacity .6s ease';
+            card.style.transform = 'translateX(0)';
+            card.style.opacity = '1';
+        }, 500);
+    }
+
+    function renderQuranTypewriter(data) {
+        const arabEl  = document.getElementById('quranArab');
+        const transEl = document.getElementById('quranTrans');
+        const refEl   = document.getElementById('quranRef');
+        const cArab   = document.querySelector('[data-cursor-arab]');
+        const cTrans  = document.querySelector('[data-cursor-trans]');
+
+        if (_quranTypeTimer) { clearInterval(_quranTypeTimer); _quranTypeTimer = null; }
+
+        if (refEl)  refEl.textContent  = data.reference || '';
+        if (arabEl) arabEl.textContent = '';
+        if (transEl) transEl.textContent = '';
+        if (cArab)  cArab.style.display  = 'inline';
+        if (cTrans) cTrans.style.display = 'none';
+
+        // Mirror to ghost spans for any layout that referenced them
+        setText('quranArab2',  data.arabic);
+        setText('quranTrans2', data.translation || '');
+        setText('quranRef2',   data.reference   || '');
+
+        const arabFull  = data.arabic || '';
+        const transFull = data.translation || '';
+        const arabChars  = Array.from(arabFull);   // unicode-safe
+        const transChars = Array.from(transFull);
+        let i = 0, j = 0, phase = 'arab';
+
+        const speed = 55; // ms per char
+        _quranTypeTimer = setInterval(() => {
+            if (phase === 'arab') {
+                if (i < arabChars.length) {
+                    arabEl.textContent = arabChars.slice(0, ++i).join('');
+                } else {
+                    if (cArab)  cArab.style.display  = 'none';
+                    if (cTrans) cTrans.style.display = 'inline';
+                    phase = 'trans';
+                }
+            } else if (phase === 'trans') {
+                if (j < transChars.length) {
+                    transEl.textContent = transChars.slice(0, ++j).join('');
+                } else {
+                    clearInterval(_quranTypeTimer);
+                    _quranTypeTimer = null;
+                    if (cTrans) cTrans.style.display = 'none';
+                }
+            }
+        }, speed);
+    }
+
     async function loadQuran() {
         try {
             const r = await fetch('api/quran.php', { cache: 'no-store' });
             const data = await r.json();
-            if (data && data.arabic) {
-                const setText = (id, val) => {
-                    const el = document.getElementById(id);
-                    if (el) el.textContent = val || '';
-                };
-                // Card mode: fade out → set → fade in (for nicer transition)
-                const isCard = document.body.dataset.quranDisplay === 'card';
-                const card = document.getElementById('quranCard');
-                const apply = () => {
-                    setText('quranArab',   data.arabic);
-                    setText('quranTrans',  data.translation || '');
-                    setText('quranRef',    data.reference   || '');
-                    setText('quranArab2',  data.arabic);
-                    setText('quranTrans2', data.translation || '');
-                    setText('quranRef2',   data.reference   || '');
-                };
-                if (isCard && card) {
-                    card.style.transition = 'opacity .4s ease';
-                    card.style.opacity = '0';
-                    setTimeout(() => { apply(); card.style.opacity = '1'; }, 400);
-                } else {
-                    apply();
+            if (!data || !data.arabic) return;
+
+            const mode = document.body.dataset.quranDisplay || 'marquee';
+
+            switch (mode) {
+                case 'fullcard':
+                    renderQuranFullCard(data);
+                    break;
+                case 'slide':
+                    renderQuranSlide(data);
+                    break;
+                case 'typewriter':
+                    renderQuranTypewriter(data);
+                    break;
+                case 'card': {
+                    const card = document.getElementById('quranCard');
+                    if (card) {
+                        card.style.transition = 'opacity .4s ease';
+                        card.style.opacity = '0';
+                        setTimeout(() => { applyQuranBasic(data); card.style.opacity = '1'; }, 400);
+                    } else {
+                        applyQuranBasic(data);
+                    }
+                    break;
                 }
+                default:
+                    applyQuranBasic(data);
             }
         } catch(e){ /* ignore */ }
     }
+
+    // Re-fit auto-fit text on resize
+    window.addEventListener('resize', () => {
+        const mode = document.body.dataset.quranDisplay;
+        if (mode === 'fullcard') {
+            const arab = document.getElementById('quranArab');
+            const trans = document.getElementById('quranTrans');
+            if (arab)  autoFitText(arab,  { min: 14, max: 32, maxHeight: 90 });
+            if (trans) autoFitText(trans, { min: 11, max: 18, maxHeight: 56 });
+        }
+    });
 
     /* ============= Component visibility (driven by body data-* attrs) ============= */
     function applyComponentVisibility() {
@@ -363,7 +518,14 @@
 
         startSlideshow();
         loadQuran();
-        setInterval(loadQuran, 30 * 1000);
+        // Interval bergantung mode: typewriter & slide butuh waktu lebih lama
+        const qm = document.body.dataset.quranDisplay || 'marquee';
+        const quranInterval =
+            qm === 'typewriter' ? 45 * 1000 :
+            qm === 'slide'      ? 12 * 1000 :
+            qm === 'fullcard'   ? 20 * 1000 :
+                                  30 * 1000;
+        setInterval(loadQuran, quranInterval);
 
         // Tengah malam → reload data
         setInterval(() => {
