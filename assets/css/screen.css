@@ -256,3 +256,80 @@ video.slide { object-fit: cover; width: 100%; height: 100%; }
 #quranArab, #quranTrans {
     overflow-wrap: anywhere;
 }
+
+
+
+/* ===================== SLIDESHOW-CENTRIC LAYOUTS NEXT-STATE ===================== */
+
+/* Theater */
+.layout-theater .prayer.next .float-prayer,
+.layout-theater .float-prayer.next {
+    border-color: var(--accent);
+    background: linear-gradient(180deg, color-mix(in srgb, var(--accent) 28%, rgba(0,0,0,0.55)), rgba(0,0,0,0.55));
+    box-shadow: 0 0 30px -6px var(--accent);
+}
+.layout-theater .float-prayer.next [data-time] { color: var(--accent); }
+
+/* Showcase */
+.layout-showcase .prayer.next .ps-card,
+.layout-showcase .ps-card.next {
+    border-color: var(--accent);
+    background: linear-gradient(180deg, color-mix(in srgb, var(--accent) 22%, transparent), color-mix(in srgb, var(--accent) 5%, transparent));
+    box-shadow: 0 12px 40px -10px var(--accent);
+}
+.layout-showcase .ps-card.next [data-time] { color: var(--accent); }
+
+/* Split */
+.layout-split .prayer.next .pl-row,
+.layout-split .pl-row.next {
+    background: linear-gradient(90deg, color-mix(in srgb, var(--accent) 22%, transparent), transparent);
+    border-left: 3px solid var(--accent);
+}
+.layout-split .pl-row.next [data-time] { color: var(--accent); }
+
+/* Polaroid */
+.layout-polaroid .prayer.next .schedule-card,
+.layout-polaroid .schedule-card.next {
+    background: linear-gradient(180deg, #fde68a, #f5b301);
+    box-shadow: 0 8px 24px -4px rgba(245,179,1,0.7), inset 0 0 0 1px rgba(0,0,0,0.1);
+}
+
+/* Window */
+.layout-window .prayer.next .ring-card,
+.layout-window .ring-card.next {
+    border-color: var(--accent);
+    background: linear-gradient(180deg, color-mix(in srgb, var(--accent) 25%, transparent), color-mix(in srgb, var(--accent) 5%, transparent));
+    box-shadow: 0 12px 30px -8px var(--accent), inset 0 0 18px color-mix(in srgb, var(--accent) 15%, transparent);
+}
+.layout-window .ring-card.next [data-time] { color: var(--accent); }
+
+/* Festival */
+.layout-festival .prayer.next .prayer-pearl,
+.layout-festival .prayer-pearl.next {
+    background: linear-gradient(180deg, color-mix(in srgb, var(--accent) 30%, rgba(0,0,0,0.6)), rgba(0,0,0,0.6));
+    border-color: var(--accent);
+    box-shadow: 0 0 30px var(--accent), inset 0 0 20px color-mix(in srgb, var(--accent) 20%, transparent);
+}
+.layout-festival .prayer-pearl.next [data-time] {
+    color: var(--accent);
+    text-shadow: 0 0 12px var(--accent);
+}
+
+/* Portrait */
+.layout-portrait .prayer.next .pr-row,
+.layout-portrait .pr-row.next {
+    background: linear-gradient(90deg, color-mix(in srgb, var(--accent) 22%, transparent), transparent);
+    border-color: var(--accent);
+    box-shadow: 0 8px 24px -6px var(--accent);
+}
+.layout-portrait .pr-row.next [data-time] { color: var(--accent); }
+
+/* Override universal left bar for layouts that have own highlight */
+.layout-theater .prayer.next::before,
+.layout-showcase .prayer.next::before,
+.layout-polaroid .prayer.next::before,
+.layout-window .prayer.next::before,
+.layout-festival .prayer.next::before,
+.layout-portrait .prayer.next::before {
+    display: none;
+}

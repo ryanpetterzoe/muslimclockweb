@@ -114,6 +114,13 @@ function mc_layouts(): array
         'magazine' => ['Magazine', 'Editorial ala majalah: typography serif, hero photo besar, jadwal koran modern.'],
         'stadium'  => ['Stadium',  'Papan skor LED stadion: jam besar bergaya scoreboard, dot-matrix grid, mode glow.'],
         'frame'    => ['Frame',    'Bingkai ornamen Islamic: medallion sentral, jadwal arch-card kanan-kiri, klasik mewah.'],
+        'theater'  => ['Theater',  'Slideshow fullscreen jadi background, info melayang dengan glass overlay imersif.'],
+        'showcase' => ['Showcase', 'Slideshow gede 60% di atas, info overlay glass, jadwal panel bawah elegan.'],
+        'split'    => ['Split',    'Split-screen 2 slideshow paralel kiri-kanan dengan center bar jam & jadwal.'],
+        'polaroid' => ['Polaroid', 'Frame foto polaroid bertumpuk di atas papan kayu, sticky-note jadwal vintage.'],
+        'window'   => ['Window',   'Slideshow di "jendela" tengah dengan blurred BG sama, jadwal melingkar atas-bawah.'],
+        'festival' => ['Festival', 'Slideshow + confetti jatuh + lampion goyang. Cocok Ramadhan & Idul Fitri.'],
+        'portrait' => ['Portrait', 'Slideshow vertikal portrait di kiri, modul jam & jadwal di kanan ala majalah.'],
     ];
 }
 
