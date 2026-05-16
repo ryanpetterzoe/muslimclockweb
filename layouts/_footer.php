@@ -16,7 +16,6 @@ $showRunning     = (string)mc_setting('show_running', '1') !== '0';
 $rows = [];
 if ($showQuran)   $rows[] = 'auto';
 if ($showRunning) $rows[] = 'auto';
-$rows[] = '28px';
 $gridRows = implode(' ', $rows);
 ?>
 <footer class="grid relative z-10" style="grid-template-rows: <?= $gridRows ?>;">
@@ -169,10 +168,4 @@ $gridRows = implode(' ', $rows);
             </div>
         </div>
     <?php endif; ?>
-
-    <!-- Brand bar -->
-    <div class="text-center text-xs font-extrabold leading-7 tracking-[3px] uppercase"
-         style="background: var(--accent); color: var(--primary-dark);">
-        <?= mc_e($masjid) ?> · Muslim Clock Web
-    </div>
 </footer>

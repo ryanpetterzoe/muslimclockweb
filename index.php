@@ -107,12 +107,6 @@ if (file_exists($layoutFile)) {
     <div class="absolute top-6 right-8 text-slate-500 text-xs">tekan ESC untuk tutup</div>
 </div>
 
-<!-- Floating debug bar -->
-<div id="debugBar">
-    <button id="testAdzan" type="button">▶ Test Adzan</button>
-    <span class="px-2 py-1 rounded" style="background: rgba(20,25,40,0.8);">build <?= $buildVer ?> · <?= mc_e($layout) ?></span>
-</div>
-
 <script>
 window.MC_TODAY_IMAMS = <?= json_encode($imamRows, JSON_UNESCAPED_UNICODE) ?>;
 window.MC_BASE  = <?= json_encode(mc_base_url()) ?>;
