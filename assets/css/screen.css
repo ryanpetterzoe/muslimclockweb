@@ -1,159 +1,66 @@
-/* ===== Muslim Clock Web — Display ===== */
-*, *::before, *::after { box-sizing: border-box; }
-html, body { margin: 0; padding: 0; height: 100%; background: #000; color: #fff; overflow: hidden;
-    font-family: "Segoe UI", system-ui, -apple-system, Roboto, Arial, sans-serif; }
+/* ===== Muslim Clock Web — Display (v4) =====
+   Sebagian besar styling pakai Tailwind via CDN; file ini hanya untuk
+   hal yang tidak bisa diekspresikan via utility classes. */
 
-#screen {
-    width: 100vw; height: 100vh; display: grid;
-    grid-template-rows: 80px 1fr 110px;
+html, body { margin: 0; padding: 0; height: 100%; }
+
+/* ---------- Slideshow fade ---------- */
+.slide {
+    opacity: 0;
+    transition: opacity 1.2s ease-in-out;
 }
+.slide.active { opacity: 1; }
 
-/* ---------- HEADER ---------- */
-.topbar {
-    background: linear-gradient(180deg, #fff, #f3f6fb);
-    color: #0b2447;
-    display: flex; align-items: center; justify-content: space-between;
-    padding: 0 24px;
-    border-bottom: 4px solid var(--accent);
-}
-.topbar .masjid { display: flex; align-items: center; gap: 14px; }
-.topbar .masjid img { width: 56px; height: 56px; object-fit: contain; }
-.topbar h1 { margin: 0; font-size: 28px; font-weight: 800; letter-spacing: .3px; }
-.topbar h1 .kw { color: var(--accent); font-weight: 800; }
-.topbar .addr { font-size: 13px; color: #4b5e7e; margin-top: 2px; }
-.topbar .hijri { text-align: right; direction: rtl; }
-.topbar .greg { font-weight: 700; font-size: 16px; color: #0b2447; }
-.topbar .hij  { font-weight: 700; font-size: 14px; color: #4b5e7e; }
-
-/* ---------- BODY ---------- */
-.body { display: grid; grid-template-columns: 1fr 360px; min-height: 0; }
-
-/* LEFT side */
-.left { position: relative; overflow: hidden; background: #000; }
-.slideshow { position: absolute; inset: 0; }
-.slideshow .slide {
-    position: absolute; inset: 0; opacity: 0; transition: opacity 1s ease-in-out;
-    background-size: cover; background-position: center;
-}
-.slideshow .slide.active { opacity: 1; }
-.slideshow video.slide { object-fit: cover; width: 100%; height: 100%; }
-
-/* Analog clock overlay */
-.clock-wrap {
-    position: absolute; inset: 0; display: flex; flex-direction: column;
-    align-items: center; justify-content: center; pointer-events: none;
-}
-.clock {
-    position: relative; width: 320px; height: 320px; border-radius: 50%;
-    background: radial-gradient(circle at 50% 50%, #fff 0 60%, #f0f3f9 60% 100%);
-    box-shadow: 0 0 0 12px var(--primary), 0 0 0 16px var(--accent), 0 18px 50px rgba(0,0,0,.5);
-}
-.clock .num { position: absolute; left: 50%; top: 50%; width: 0; height: 0; color: #0b2447; font-weight: 800; font-size: 22px; }
-.clock .num span { position: absolute; transform: translate(-50%, -50%); }
-/* place numbers */
-.clock .num { transform: translate(-50%, -50%); }
-.clock .n12 { transform: translate(-50%, calc(-50% - 130px)); }
-.clock .n6  { transform: translate(-50%, calc(-50% + 130px)); }
-.clock .n3  { transform: translate(calc(-50% + 130px), -50%); }
-.clock .n9  { transform: translate(calc(-50% - 130px), -50%); }
-.clock .n1  { transform: translate(calc(-50% + 65px), calc(-50% - 113px)); }
-.clock .n2  { transform: translate(calc(-50% + 113px), calc(-50% - 65px)); }
-.clock .n4  { transform: translate(calc(-50% + 113px), calc(-50% + 65px)); }
-.clock .n5  { transform: translate(calc(-50% + 65px), calc(-50% + 113px)); }
-.clock .n7  { transform: translate(calc(-50% - 65px), calc(-50% + 113px)); }
-.clock .n8  { transform: translate(calc(-50% - 113px), calc(-50% + 65px)); }
-.clock .n10 { transform: translate(calc(-50% - 113px), calc(-50% - 65px)); }
-.clock .n11 { transform: translate(calc(-50% - 65px), calc(-50% - 113px)); }
-
-.clock .hand { position: absolute; left: 50%; top: 50%; transform-origin: 50% 100%;
-    background: #0b2447; border-radius: 4px; }
-.clock .hand.hour   { width: 8px; height: 90px;  margin-left: -4px; margin-top: -90px; }
-.clock .hand.minute { width: 6px; height: 120px; margin-left: -3px; margin-top: -120px; background: #0b2447; }
-.clock .hand.second { width: 2px; height: 130px; margin-left: -1px; margin-top: -130px; background: #d62828; }
-.clock .dot { position: absolute; left: 50%; top: 50%; width: 14px; height: 14px; margin: -7px 0 0 -7px;
-    background: #d62828; border-radius: 50%; box-shadow: 0 0 0 3px #fff; }
-.clock .brand { position: absolute; left: 50%; top: 64%; transform: translateX(-50%);
-    color: var(--accent); font-weight: 800; font-size: 11px; letter-spacing: 2px; text-align: center; max-width: 80%; }
-
-.digital {
-    margin-top: 16px; background: rgba(0,0,0,.5); color: #fff;
-    padding: 6px 16px; border-radius: 99px; font-weight: 700; letter-spacing: 2px;
-    font-variant-numeric: tabular-nums;
+/* ---------- Running text ticker ---------- */
+@keyframes ticker {
+    0%   { transform: translateX(0); }
+    100% { transform: translateX(-100%); }
 }
 
-/* Lower-third running text */
-.lowerthird {
-    position: absolute; left: 0; right: 0; bottom: 14px;
-    display: flex; align-items: center; gap: 0;
-    color: #fff;
+/* ---------- Prayer card highlight (next prayer) ---------- */
+.prayer.next {
+    background: linear-gradient(90deg,
+        rgba(255,255,255,0.15) 0%,
+        rgba(255,255,255,0.05) 100%);
+    position: relative;
 }
-.lt-time {
-    background: rgba(0,0,0,.6); padding: 8px 18px; border-radius: 99px;
-    margin-left: 14px; font-weight: 700; font-size: 14px;
+.prayer.next::before {
+    content: "";
+    position: absolute;
+    left: 0; top: 0; bottom: 0;
+    width: 4px;
+    background: var(--accent);
 }
-.lt-track {
-    flex: 1; overflow: hidden; margin: 0 14px;
-    background: rgba(0,0,0,.5); border-radius: 6px; padding: 8px 0;
+.prayer.next [data-time] {
+    color: var(--accent) !important;
 }
-.lt-text { white-space: nowrap; display: inline-block; padding-left: 100%;
-    animation: ticker 45s linear infinite; font-weight: 600; font-size: 16px; }
-@keyframes ticker { 0% { transform: translateX(0); } 100% { transform: translateX(-100%); } }
 
-/* RIGHT side: prayer card */
-.right {
-    background: linear-gradient(180deg, #0a4ea3 0%, #0b2f6b 100%);
-    background: linear-gradient(180deg, color-mix(in srgb, var(--primary) 100%, white) 0%,
-                                       color-mix(in srgb, var(--primary) 60%, black) 100%);
-    display: flex; flex-direction: column; justify-content: stretch;
-}
-.prayer {
-    flex: 1; display: grid; grid-template-columns: 1fr auto;
-    align-items: center; gap: 16px;
-    padding: 0 24px; color: #fff;
-    border-bottom: 1px solid rgba(255,255,255,.18);
-    direction: rtl;
-}
-.prayer:last-child { border-bottom: none; }
-.prayer .label { font-size: 30px; font-weight: 800; letter-spacing: .5px; }
-.prayer .label .imam { font-size: 12px; font-weight: 600; color: #ffe9a8; margin-top: 4px; direction: ltr; }
-.prayer .time  { font-size: 38px; font-weight: 800; font-variant-numeric: tabular-nums;
-    background: #fff; color: var(--primary); padding: 4px 14px; border-radius: 8px; min-width: 130px; text-align: center; }
-.prayer.next { background: rgba(255,255,255,.12); }
-.prayer.next .time { background: var(--accent); color: #0b2447; }
+/* ---------- Analog clock smooth ---------- */
+#handH, #handM { transition: transform 0.5s cubic-bezier(0.4, 2.0, 0.55, 0.44); }
+#handS         { transition: transform 0.15s cubic-bezier(0.4, 2.5, 0.55, 0.44); }
 
-/* ---------- FOOTER ---------- */
-.bottom {
-    background: #000;
-    display: grid; grid-template-rows: 1fr 26px; min-height: 0;
+/* ---------- Adzan overlay enter animation ---------- */
+#adzanOverlay:not(.hidden) {
+    animation: fadeIn 0.6s ease-out;
 }
-.quran {
-    color: #fff; padding: 8px 24px; display: flex; align-items: center; gap: 22px;
-    border-top: 2px solid var(--accent);
-    overflow: hidden;
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to   { opacity: 1; }
 }
-.quran .qa { font-size: 26px; direction: rtl; font-family: "Traditional Arabic", "Amiri", "Segoe UI", serif;
-    flex: 0 1 auto; max-width: 38%; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.quran .qt { font-size: 14px; color: #ffe9a8; flex: 1 1 auto; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.quran .qr { font-size: 13px; color: var(--accent); font-weight: 700; }
-.brandbar  { background: var(--accent); color: #0b2447; text-align: center; font-size: 12px; font-weight: 800;
-    line-height: 26px; letter-spacing: 1px; }
+#adzanOverlay #ovCount {
+    animation: pulse 2s ease-in-out infinite;
+}
+@keyframes pulse {
+    0%, 100% { transform: scale(1); }
+    50%      { transform: scale(1.03); }
+}
 
-/* ---------- ADZAN OVERLAY ---------- */
-.overlay { position: fixed; inset: 0; background: rgba(3, 10, 28, .95); z-index: 50;
-    display: flex; align-items: center; justify-content: center; }
-.overlay.hidden { display: none; }
-.ov-inner { text-align: center; color: #fff; }
-.ov-prayer { color: var(--accent); font-size: 64px; font-weight: 900; letter-spacing: 8px; }
-.ov-msg    { font-size: 78px; font-weight: 800; margin: 12px 0 30px; }
-.ov-count  { font-size: 200px; font-weight: 900; font-variant-numeric: tabular-nums; line-height: 1; color: #fff; }
-.ov-sub    { font-size: 28px; color: #ffe9a8; margin-top: 16px; letter-spacing: 4px; }
-
-/* ---------- responsive (TV scaling) ---------- */
-@media (max-width: 1100px) {
-    .body { grid-template-columns: 1fr 280px; }
-    .clock { width: 240px; height: 240px; }
-    .clock .hand.hour { height: 70px; margin-top: -70px; }
-    .clock .hand.minute { height: 95px; margin-top: -95px; }
-    .clock .hand.second { height: 100px; margin-top: -100px; }
-    .prayer .label { font-size: 22px; } .prayer .time { font-size: 28px; min-width: 100px; }
+/* ---------- Responsive (smaller screens) ---------- */
+@media (max-width: 1280px) {
+    main { grid-template-columns: 1fr 320px 320px !important; }
+    #analog { width: 16rem !important; height: 16rem !important; }
+}
+@media (max-width: 1024px) {
+    main { grid-template-columns: 1fr 280px !important; }
+    .prayer-col { display: none; }
 }
