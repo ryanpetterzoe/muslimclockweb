@@ -318,6 +318,18 @@
             }
             if (e.key === 'Escape') hideAdzan();
         });
+
+        // Tombol Test Adzan (visible)
+        const testBtn = $('#testAdzan');
+        if (testBtn) {
+            testBtn.addEventListener('click', () => {
+                if (state.adzanActive || state.iqomahActive) hideAdzan();
+                else showAdzan('maghrib');
+            });
+        }
+
+        // Confirm asset version loaded
+        console.log('[MuslimClock] build:', window.MC_BUILD || '?', 'clock.js v6+');
     }
 
     document.addEventListener('DOMContentLoaded', init);

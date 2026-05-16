@@ -6,6 +6,16 @@ if (!mc_is_installed()) {
     exit;
 }
 
+// Force browsers to never cache the HTML so updates show up immediately
+header('Cache-Control: no-store, no-cache, must-revalidate, max-age=0');
+header('Pragma: no-cache');
+header('Expires: 0');
+
+// Cache-busting versions for static assets
+$cssVer = @filemtime(__DIR__ . '/assets/css/screen.css') ?: time();
+$jsVer  = @filemtime(__DIR__ . '/assets/js/clock.js') ?: time();
+$buildVer = substr(md5("$cssVer-$jsVer"), 0, 7);
+
 $pdo = mc_db();
 
 $masjid     = mc_setting('masjid_name', 'Masjid');
@@ -38,7 +48,7 @@ $isFriday = $today === 5;
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Orbitron:wght@500;600;700;800;900&family=Amiri:wght@400;700&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="assets/css/screen.css?v=6">
+<link rel="stylesheet" href="assets/css/screen.css?v=<?= $cssVer ?>">
 <style>
     :root {
         --primary: <?= mc_e($primary) ?>;
@@ -292,10 +302,20 @@ $isFriday = $today === 5;
     </div>
 </div>
 
+<!-- Floating debug controls (visible) -->
+<div class="fixed bottom-2 left-2 z-40 flex items-center gap-2 text-xs text-slate-500 select-none">
+    <button id="testAdzan" type="button"
+            class="bg-slate-800/80 hover:bg-slate-700 text-amber-300 font-semibold px-3 py-1.5 rounded-md border border-slate-700">
+        &#x25B6; Test Adzan
+    </button>
+    <span class="bg-slate-800/60 px-2 py-1 rounded">build: <?= $buildVer ?></span>
+</div>
+
 <script>
 window.MC_TODAY_IMAMS = <?= json_encode($imamRows, JSON_UNESCAPED_UNICODE) ?>;
 window.MC_BASE = <?= json_encode(mc_base_url()) ?>;
+window.MC_BUILD = <?= json_encode($buildVer) ?>;
 </script>
-<script src="assets/js/clock.js?v=6"></script>
+<script src="assets/js/clock.js?v=<?= $jsVer ?>"></script>
 </body>
 </html>
